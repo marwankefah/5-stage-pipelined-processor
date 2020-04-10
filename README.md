@@ -76,8 +76,8 @@ The bus between memory and the processor is (16-bit or 32-bit) widths for instru
 
 ## Design
 ### Instructions
-TODO upload a picture of all instructions with their codes
+![Image of Full Final Instruction Set](https://i.ibb.co/wcRfCg0/ISet.png)
 ### Control Unit
-TODO upload a picture of control unit truth table away with the logic gates
+![Image of Full Final Control Unit Design](https://i.ibb.co/SX86fgK/Control-TT.png)
 ### Schema
-TODO upload the schema design of the pipelined processor after necessary modification
+![Image of Full Final Schema](https://i.ibb.co/XYq3XtQ/Pipelined-Hazard-Schema1-Pipelined-ctrl-frwrd-unit.png)
