@@ -1,6 +1,5 @@
 
 
-
 --ALU EXTEND
 --Contains Combinational circuit for ALU result + CCR
 --Contains 4 muxes for execute purpose 
@@ -59,7 +58,7 @@ signal BmuxOut: std_logic_vector(n-1 DOWNTO 0);
 signal OP2SMux_BMux: std_logic_vector(n-1 DOWNTO 0);
 signal CCROut_ALU: std_logic_vector(2 DOWNTO 0);
 -- flags only take the last 3 least signifcant bits
-signal flagsMuxOut:std_logic_vector(n-1 DOWNTO 0);
+signal flagsMuxOut:std_logic_vector(2 DOWNTO 0);
 signal flagSelecExtend:std_logic_vector(1 DOWNTO 0);
 Begin
 
@@ -67,7 +66,7 @@ Begin
 
 OP2SMux: mux_generic generic map(n) port map (
 					in0 => RD2, 
-					in1 => std_logic_vector(to_unsigned(1,n-1)),
+					in1 => std_logic_vector(to_unsigned(1,n)),
 					in2 => IMMe , 
 					in3 => IMMe,
 					sel => OP2S,
