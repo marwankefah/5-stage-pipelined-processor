@@ -45,7 +45,7 @@ inAUnsigned<=unsigned(inA);
 inBUnsigned<=unsigned(inB);
 
 
-process(sel)
+process(sel,inAUnsigned,inBUnsigned)
 begin
 case sel is 
 when "000"   =>   extendedOutput<= ('0'&inAUnsigned)  +  ('0'&inBUnsigned); 
