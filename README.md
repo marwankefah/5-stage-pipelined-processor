@@ -1,5 +1,5 @@
 # 5-stage Pipelined Processor
-<br>A simple 5-stage pipelined processor Harvard Architecture.
+<br>A simple 5-stage pipelined processor based on the Harvard Architecture.
 ## Introduction
   The processor in this project has a RISC-like instruction set architecture. There are eight 4-byte general purpose registers; R0, till R7. Another two general purpose registers, One works as program counter (PC). And the other, works as a stack pointer (SP).
 The initial value of SP is (2^32-1). The memory address space is 4 GB of 16-bit width and is word addressable. ( N.B. word = 2 bytes).
@@ -76,8 +76,11 @@ The bus between memory and the processor is (16-bit or 32-bit) widths for instru
 
 ## Design
 ### Instructions
-TODO upload a picture of all instructions with their codes
+Below is the full instruction list, as well as the **OpCode** composition for each instruction.
+![Image of Full Final Instruction Set](https://i.ibb.co/wcRfCg0/ISet.png)
 ### Control Unit
-TODO upload a picture of control unit truth table away with the logic gates
+Full control unit output truth table for each instruction
+![Image of Full Final Control Unit Design](https://i.ibb.co/SX86fgK/Control-TT.png)
 ### Schema
-TODO upload the schema design of the pipelined processor after necessary modification
+Fully pipelined diagram illustrating the architecture of the processor, in addition to the layout of _control, hazard detection, interrupt handling and forwarding units_
+![Image of Full Final Schema](https://i.ibb.co/XYq3XtQ/Pipelined-Hazard-Schema1-Pipelined-ctrl-frwrd-unit.png)
