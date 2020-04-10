@@ -52,7 +52,7 @@ when "001"   =>   extendedOutput<= ('0'&inAUnsigned)  -  ('0'&inBUnsigned);
 when "010"   =>   extendedOutput<= ('0'&inAUnsigned) and ('0'&inBUnsigned);
 when "011"   =>   extendedOutput<= ('0'&inAUnsigned)  or ('0'&inBUnsigned);
 when "100"   =>   extendedOutput<= '0'& (not inAUnsigned);
-when "101"   =>   extendedOutput<= inAUnsigned(n-1)&inAUnsigned(n-2 DOWNTO 1)&'0';
+when "101"   =>   extendedOutput<= inAUnsigned(n-1)&inAUnsigned(n-2 DOWNTO 0)&'0';
 when "110"   =>   extendedOutput<= inAUnsigned(0)&'0'&inAUnsigned(n-1 DOWNTO 1);
 when "111"   =>   extendedOutput<= '0'& inAUnsigned;
 when others   =>  extendedOutput<= (extendedOutput(n DOWNTO 0)'range => '0');
