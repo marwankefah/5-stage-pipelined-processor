@@ -5,7 +5,7 @@
 The initial value of SP is (2^32-1). The memory address space is 4 GB of 16-bit width and is word addressable. ( N.B. word = 2 bytes).
 The bus between memory and the processor is (16-bit or 32-bit) widths for instruction memory and 32-bit widths for data memory.
 
-  When an interrupt occurs, the processor finishes the currently fetched instructions (instructions that have already entered the pipeline), then the address of the next instruction (in PC) is saved on top of the stack, and PC is loaded from address [2-3] of the memory (the address takes two words). To return from an interrupt, an RTI instruction loads PC from the top of stack, and the flow of the program resumes from the instruction after the interrupted instruction. Take care of corner cases like Branching,Push,POP.
+  When an interrupt occurs, the processor finishes the currently fetched instructions (instructions that have already entered the pipeline), then the address of the next instruction (in PC) is saved on top of the stack, and PC is loaded from address [2-3] of the memory (the address takes two words). To return from an interrupt, an RTI instruction loads PC from the top of stack, and the flow of the program resumes from the instruction after the interrupted instruction.
 
 ## ISA Specifications
 ### A) Registers
@@ -76,6 +76,8 @@ The bus between memory and the processor is (16-bit or 32-bit) widths for instru
 | Interrupt | M[Sp]←PC; sp-2;PC ← {M[3],M[2]}; <br> Flags preserved  |
 
 ## Design
+### Summary
+The processor's data path is divided into five pipeline stages, each containing one of the classic RISC pipeline operations: Instruction fetch **(IF)**, Instruction decode and register fetch **(ID)**, Execute **(EX)**, Memory access **(MEM)**, and Register write back **(WB)**. Each stage is implemented through a pipeline buffer register, four of them between each one of the stages: **IF/ID, ID/EX, EX/MEM, and MEM/WB**. A centralized _Control Unit_ at the ID stage writes the appropriate control signals for each instruction operation code, some of which pass through the pipeline. To maintain the consistency and reliability of data retrieval throughout the pipeline stages, a _Forwarding Unit_ forwards data through the pipeline to the appropriate stage. In cases where a stall or discarding of the entire pipeline is needed, a _Hazard Detection Unit_ overwrites instruction control signals to achieve the required result. An _Interrupt Handling Unit_ handles cases where an external signal (INT or RST) overwrites the pipeline, or when executing a multicycle instruction.
 ### Instructions
 Below is the full instruction list, as well as the **OpCode** composition for each instruction.
 ![Image of Full Final Instruction Set](https://i.ibb.co/wcRfCg0/ISet.png)
@@ -84,4 +86,4 @@ Full control unit output truth table for each instruction
 ![Image of Full Final Control Unit Design](https://i.ibb.co/SX86fgK/Control-TT.png)
 ### Schema
 Fully pipelined diagram illustrating the architecture of the processor, in addition to the layout of _control, hazard detection, interrupt handling and forwarding units_
-![Image of Full Final Schema](https://i.ibb.co/XYq3XtQ/Pipelined-Hazard-Schema1-Pipelined-ctrl-frwrd-unit.png)
+![Image of Full Final Schema](https://i.ibb.co/F4RqtGs/Pipelined-Hazard-Schema1-Pipelined-ctrl-frwrd-unit-Pipelined-ctrl-frwrd-unit.png)
