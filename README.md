@@ -55,8 +55,8 @@ The size of the bus between the memory and the processor is 32 bits for instruct
 | SUB Rsrc1,Rsrc2, Rdst| Subtract the values stored in registers Rsrc1, Rsrc2 and store the result in Rdst <br> If the result =0 then Z ←1; else: Z ←0; <br> If the result <0 then N ←1; else: N ←0|
 |AND Rsrc1,Rsrc2, Rdst| AND the values stored in registers Rsrc1, Rsrc2 and store the result in Rdst <br>If the result =0 then Z ←1; else: Z ←0; <br> If the result <0 then N ←1; else: N ←0|
 | OR Rsrc1,Rsrc2, Rdst| OR the values stored in registers Rsrc1, Rsrc2<br> and store the result in Rdst<br> If the result =0 then Z ←1; else: Z ←0;<br> If the result <0 then N ←1; else: N ←0 |
-| SHL Rsrc, Imm | Shift left Rsrc by #Imm bits and store result in same register;<br> Don’t forget to update carry|
-| SHR Rsrc, Imm | Shift right Rsrc by #Imm bits and store result in same register;<br> Don’t forget to update carry|
+| SHL Rsrc, Imm | Shift left Rsrc by #Imm bits and store result in same register;<br>|
+| SHR Rsrc, Imm | Shift right Rsrc by #Imm bits and store result in same register;<br>|
 | PUSH Rdst |  M[SP--] ← R[ Rdst ]; |
 | POP Rdst |  R[ Rdst ] ← M[++SP]; |
 | LDM Rdst, Imm | Load immediate value (16 bit) to register Rdst<br> R[ Rdst ] ← {0,Imm<15:0>}|
