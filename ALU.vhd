@@ -1,7 +1,7 @@
 
 --INPUT A	the first operand
 --INPUT B	the second operand
---INPUT	ALUop	the selection lines from the control register
+--INPUT	sel	the selection lines from the control register
 --OUTPUT ALUResult 	the output of the alu sized 32 bit
 --OUTPUT CCR		condition flags sized 3 bits
 	-- Z<0>:=CCR<0> ; zero flag, change after arithmetic, logical, or shift operations
@@ -27,9 +27,8 @@ ENTITY ALU IS
 GENERIC (n : integer := 32);
 PORT (	inA:IN std_logic_vector(n-1 DOWNTO 0);
  	inB : IN std_logic_vector(n-1 DOWNTO 0) ;
-	cin : IN std_logic;
 	sel: in std_logic_vector (2 DOWNTO 0);
-	ALUop: OUT std_logic_vector(n-1 DOWNTO 0);
+	ALUOut: OUT std_logic_vector(n-1 DOWNTO 0);
 	CCR : OUT std_logic_vector(2 DOWNTO 0));
 END ALU;
 
@@ -61,7 +60,7 @@ end case;
 end process;
 
 --Output after operation
-ALUop<=std_logic_vector(extendedOutput(n-1 DOWNTO 0));
+ALUOut<=std_logic_vector(extendedOutput(n-1 DOWNTO 0));
 -- Zero Flag
 CCR(0)<='1' when extendedOutput(n-1 DOWNTO 0) = (extendedOutput(n-1 DOWNTO 0)'range => '0') else '0';
 --Negative Flag knows as Sign Flag
