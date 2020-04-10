@@ -13,6 +13,8 @@ PORT (	RD1:  IN std_logic_vector(n-1 DOWNTO 0);
  	RD2 : IN std_logic_vector(n-1 DOWNTO 0);
 	CCRin:  IN std_logic_vector(2 DOWNTO 0);
 	
+	--RD2 comming from memory stage
+	RD2N: IN std_logic_vector(n-1 DOWNTO 0);
 	WB:   IN std_logic_vector(n-1 DOWNTO 0);
 	ALUr: IN std_logic_vector(n-1 DOWNTO 0);
 	A:    IN std_logic_vector(1 DOWNTO 0);
@@ -76,7 +78,7 @@ OP2SMux: mux_generic generic map(n) port map (
 
 Amux: mux_generic generic map(n) port map (
 					in3 => WB, 
-					in2 => RD2 ,
+					in2 => RD2N ,
 					in1 => ALUr , 
 					in0 => RD1,
 					sel => A,
@@ -84,7 +86,7 @@ Amux: mux_generic generic map(n) port map (
 						);
 Bmux: mux_generic generic map(n) port map (
 					in3 => WB, 
-					in2 => RD2 ,
+					in2 => RD2N ,
 					in1 => ALUr , 
 					in0 => OP2SMux_BMux,
 					sel => B,
@@ -110,9 +112,9 @@ FlagsMux: mux_generic generic map(3) port map (
 
 
 
-CCR(2)<=CCRin(2) when enF='0' else '0' when clF='1' else '1' when stC ='1' else '0' when clC='1' else flagsMuxOut(2);
-CCR(0)<=CCRin(0) when enF='0' else '0' when clF='1' else flagsMuxOut(0);
-CCR(1)<=CCRin(1) when enF='0' else '0' when clF='1' else flagsMuxOut(1);
+CCR(2)<=CCRin(2) when enF='0' else '0' when clF='1' and  enF='1' else '1' when stC ='1' and enF='1' else '0' when clC='1' and  enF='1' else flagsMuxOut(2);
+CCR(0)<=CCRin(0) when enF='0' else '0' when clF='1' and  enF='1' else flagsMuxOut(0);
+CCR(1)<=CCRin(1) when enF='0' else '0' when clF='1' and  enF='1' else flagsMuxOut(1);
 
 
 END ALU_Extend_Archi;
