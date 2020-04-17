@@ -27,7 +27,7 @@ ENTITY ALU IS
 GENERIC (n : integer := 32);
 PORT (	inA:IN std_logic_vector(n-1 DOWNTO 0);
  	inB : IN std_logic_vector(n-1 DOWNTO 0) ;
-	sel: in std_logic_vector (2 DOWNTO 0);
+	sel: IN std_logic_vector (2 DOWNTO 0);
 	ALUOut: OUT std_logic_vector(n-1 DOWNTO 0);
 	CCR : OUT std_logic_vector(2 DOWNTO 0));
 END ALU;
@@ -35,9 +35,10 @@ END ALU;
 
 
 Architecture ALUArchi of ALU IS
-signal extendedOutput:  unsigned(n DOWNTO 0);
+signal extendedOutput:  unsigned(n DOWNTO 0):=(others=>'0');
 signal inAUnsigned:	unsigned(n-1 DOWNTO 0);
 signal inBUnsigned:	unsigned(n-1 DOWNTO 0);
+
 Begin
 
 inAUnsigned<=unsigned(inA);
@@ -45,18 +46,38 @@ inBUnsigned<=unsigned(inB);
 
 
 process(sel,inAUnsigned,inBUnsigned)
+variable shiftCount:integer :=0;
 begin
+shiftCount:=   to_integer(unsigned(inB)); -- can be more optimized
 case sel is 
 when "000"   =>   extendedOutput<= ('0'&inAUnsigned)  +  ('0'&inBUnsigned); 
 when "001"   =>   extendedOutput<= ('0'&inAUnsigned)  -  ('0'&inBUnsigned);
 when "010"   =>   extendedOutput<= ('0'&inAUnsigned) and ('0'&inBUnsigned);
 when "011"   =>   extendedOutput<= ('0'&inAUnsigned)  or ('0'&inBUnsigned);
 when "100"   =>   extendedOutput<= '0'& (not inAUnsigned);
-when "101"   =>   extendedOutput<= inAUnsigned(n-1)&inAUnsigned(n-2 DOWNTO 0)&'0';
-when "110"   =>   extendedOutput<= inAUnsigned(0)&'0'&inAUnsigned(n-1 DOWNTO 1);
+
+when "101"   =>   
+if shiftCount>0 and shiftCount<33 then
+ 		  extendedOutput<= inAUnsigned(n-shiftCount)& unsigned(std_logic_vector(shift_left(inAUnsigned,shiftCount))); -- Shift left
+ELSIF shiftCount=0 THEN
+		  extendedOutput<= '0'& inAUnsigned;
+ELSE 
+		  extendedOutput<= (extendedOutput(n DOWNTO 0)'range => '0');
+end if;
+
+when "110"   => 
+IF shiftCount>0 and shiftCount<33 THEN
+  		  extendedOutput<= inAUnsigned(shiftCount-1)& unsigned(std_logic_vector(shift_right(inAUnsigned,shiftCount))); --Shift right
+ELSIF shiftCount=0 THEN
+		  extendedOutput<= '0'& inAUnsigned;
+ELSE 
+		  extendedOutput<= (extendedOutput(n DOWNTO 0)'range => '0');
+END IF;
+
 when "111"   =>   extendedOutput<= '0'& inAUnsigned;
-when others   =>  extendedOutput<= (extendedOutput(n DOWNTO 0)'range => '0');
+when others  =>   extendedOutput<= (extendedOutput(n DOWNTO 0)'range => '0');
 end case; 
+
 end process;
 
 --Output after operation
