@@ -6,6 +6,8 @@
 --| which is addressable with a 32-bit address                 |
 --| to access data of width 16-bits                            |
 --| This makes 2^31 addressable slots(around ~2B addreses)     |
+--| The Ram module returns two slots from a single address     |
+--| [address and address+1]                                    |
 --+============================================================+
 
 LIBRARY IEEE;
