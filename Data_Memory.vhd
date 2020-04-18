@@ -26,7 +26,7 @@ ARCHITECTURE DataMemArchi OF DataMemory IS
 	GENERIC(
 	  DataWidth    : INTEGER := 16;
 	  AddressWidth : INTEGER := 32;
-	  AddressSpace : INTEGER := 2147483647 --(2^31-1)
+	  AddressSpace : INTEGER := 63 --(2^31-1)
 	  );
 	PORT(
 		clk     : IN  std_logic;
@@ -51,9 +51,9 @@ BEGIN
   R_Din2 <= WD(15 DOWNTO 0);
   dm_RAM: GenRam PORT MAP (clk,MW,ADDRESS,R_Din1,R_Din2,R_Dout1,R_Dout2); 
 
-PROCESS(MR) IS
+PROCESS (MR,clk) IS
   BEGIN
-		IF MR = '1' THEN
+		IF MR = '1' AND falling_edge(clk) THEN
 			RD(31 DOWNTO 16) <= R_Dout1;
 			RD(15 DOWNTO 0) <= R_Dout2;
 		ELSE
