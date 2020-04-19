@@ -12,7 +12,7 @@ USE IEEE.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 ENTITY SPunit IS
-GENERIC (n : integer := 32);
+
 PORT (	
         clk:        IN  std_logic;
         SPS:        IN  std_logic_vector(1 DOWNTO 0);
@@ -36,24 +36,24 @@ ARCHITECTURE SPunitArchi OF SPunit IS
   END COMPONENT;
   
   COMPONENT MUX_4x1 IS
-	Generic ( n : Integer:=32);
+	
 	PORT( 
-	        in0:  IN  std_logic_vector (n-1 DOWNTO 0);
-	        in1:  IN  std_logic_vector (n-1 DOWNTO 0);
-	        in2:  IN  std_logic_vector (n-1 DOWNTO 0);
-	        in3:  IN  std_logic_vector (n-1 DOWNTO 0);
+	        in0:  IN  std_logic_vector (31 DOWNTO 0);
+	        in1:  IN  std_logic_vector (31 DOWNTO 0);
+	        in2:  IN  std_logic_vector (31 DOWNTO 0);
+	        in3:  IN  std_logic_vector (31 DOWNTO 0);
 			sel:  IN  std_logic_vector (1 DOWNTO 0);
-			outm: OUT std_logic_vector (n-1 DOWNTO 0)
+			outm: OUT std_logic_vector (31 DOWNTO 0)
 		);
   END COMPONENT;
   
   COMPONENT MUX_2x1 IS
-	Generic ( n : Integer:=32);
+	
 	PORT( 
-	        in0:  IN  std_logic_vector (n-1 DOWNTO 0);
-	        in1:  IN  std_logic_vector (n-1 DOWNTO 0);
+	        in0:  IN  std_logic_vector (31 DOWNTO 0);
+	        in1:  IN  std_logic_vector (31 DOWNTO 0);
 			sel:  IN  std_logic;
-			outm: OUT std_logic_vector (n-1 DOWNTO 0)
+			outm: OUT std_logic_vector (31 DOWNTO 0)
 		);
   END COMPONENT;
   
