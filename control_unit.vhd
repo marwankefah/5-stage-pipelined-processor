@@ -77,4 +77,3 @@ begin
 		     "000000000000000000100100101001000" when int = '1' else
 		     op_signals;		
 end control_unit_arch;
-
