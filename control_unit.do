@@ -1,9 +1,15 @@
 vsim control_unit
 add wave -position insertpoint  \
 sim:/control_unit/opcode \
+sim:/control_unit/int \
+sim:/control_unit/rst \
+sim:/control_unit/op_signals \
 sim:/control_unit/cntrl_sig
+radix signal sim:/control_unit/op_signals hex
 radix signal sim:/control_unit/cntrl_sig hex 
 force -freeze sim:/control_unit/opcode 000000 0
+force -freeze sim:/control_unit/int 0 0
+force -freeze sim:/control_unit/rst 0 0
 run 75 ps
 force -freeze sim:/control_unit/opcode 000001 0
 run 75 ps
@@ -58,4 +64,13 @@ run 75 ps
 force -freeze sim:/control_unit/opcode 011101 0
 run 75 ps
 force -freeze sim:/control_unit/opcode 011110 0
+run 75 ps
+force -freeze sim:/control_unit/int 1 0
+run 75 ps
+force -freeze sim:/control_unit/rst 1 0
+run 75 ps
+force -freeze sim:/control_unit/int 0 0
+run 75 ps
+force -freeze sim:/control_unit/rst 0 0
+force -freeze sim:/control_unit/opcode 111111 0
 run 75 ps
