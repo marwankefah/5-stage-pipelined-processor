@@ -6,7 +6,7 @@ USE IEEE.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 ENTITY MEMstage IS
-GENERIC (n : integer := 32);
+
 PORT (	
         clk:        IN  std_logic;
 		--Control Signals
@@ -33,11 +33,11 @@ ARCHITECTURE MEMstageArchi OF MEMstage IS
 
 	--Data Memory Module
 	COMPONENT DataMemory IS
-		GENERIC (n : integer := 32);
+		
 		PORT(	
 				ADDRESS: IN  std_logic_vector(31 DOWNTO 0);
-				WD:      IN  std_logic_vector(n-1 DOWNTO 0) ;
-				RD:      OUT std_logic_vector (n-1 DOWNTO 0);
+				WD:      IN  std_logic_vector(31 DOWNTO 0) ;
+				RD:      OUT std_logic_vector (31 DOWNTO 0);
 				MW:      IN  std_logic;
 				MR:      IN  std_logic;
 				clk:     IN  std_logic
@@ -46,20 +46,20 @@ ARCHITECTURE MEMstageArchi OF MEMstage IS
 
 	--Generic MUX
 	COMPONENT MUX_4x1 IS
-	Generic ( n : Integer:=32);
+	
 	PORT( 
-	        in0:  IN  std_logic_vector (n-1 DOWNTO 0);
-	        in1:  IN  std_logic_vector (n-1 DOWNTO 0);
-	        in2:  IN  std_logic_vector (n-1 DOWNTO 0);
-	        in3:  IN  std_logic_vector (n-1 DOWNTO 0);
+	        in0:  IN  std_logic_vector (31 DOWNTO 0);
+	        in1:  IN  std_logic_vector (31 DOWNTO 0);
+	        in2:  IN  std_logic_vector (31 DOWNTO 0);
+	        in3:  IN  std_logic_vector (31 DOWNTO 0);
 			sel:  IN  std_logic_vector (1 DOWNTO 0);
-			outm: OUT std_logic_vector (n-1 DOWNTO 0)
+			outm: OUT std_logic_vector (31 DOWNTO 0)
 		);
 	END COMPONENT;
 	
 	--SP Processing Unit
 	COMPONENT SPunit IS
-	GENERIC (n : integer := 32);
+	
 	PORT(	
 			clk:        IN  std_logic;
 			SPS:        IN  std_logic_vector(1 DOWNTO 0);

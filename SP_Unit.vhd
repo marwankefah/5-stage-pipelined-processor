@@ -12,7 +12,7 @@ USE IEEE.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 ENTITY SPunit IS
-GENERIC (n : integer := 32);
+
 PORT (	
         clk:        IN  std_logic;
         SPS:        IN  std_logic_vector(1 DOWNTO 0);
@@ -36,24 +36,24 @@ ARCHITECTURE SPunitArchi OF SPunit IS
   END COMPONENT;
   
   COMPONENT MUX_4x1 IS
-	Generic ( n : Integer:=32);
+	
 	PORT( 
-	        in0:  IN  std_logic_vector (n-1 DOWNTO 0);
-	        in1:  IN  std_logic_vector (n-1 DOWNTO 0);
-	        in2:  IN  std_logic_vector (n-1 DOWNTO 0);
-	        in3:  IN  std_logic_vector (n-1 DOWNTO 0);
+	        in0:  IN  std_logic_vector (31 DOWNTO 0);
+	        in1:  IN  std_logic_vector (31 DOWNTO 0);
+	        in2:  IN  std_logic_vector (31 DOWNTO 0);
+	        in3:  IN  std_logic_vector (31 DOWNTO 0);
 			sel:  IN  std_logic_vector (1 DOWNTO 0);
-			outm: OUT std_logic_vector (n-1 DOWNTO 0)
+			outm: OUT std_logic_vector (31 DOWNTO 0)
 		);
   END COMPONENT;
   
   COMPONENT MUX_2x1 IS
-	Generic ( n : Integer:=32);
+	
 	PORT( 
-	        in0:  IN  std_logic_vector (n-1 DOWNTO 0);
-	        in1:  IN  std_logic_vector (n-1 DOWNTO 0);
+	        in0:  IN  std_logic_vector (31 DOWNTO 0);
+	        in1:  IN  std_logic_vector (31 DOWNTO 0);
 			sel:  IN  std_logic;
-			outm: OUT std_logic_vector (n-1 DOWNTO 0)
+			outm: OUT std_logic_vector (31 DOWNTO 0)
 		);
   END COMPONENT;
   
@@ -68,7 +68,7 @@ ARCHITECTURE SPunitArchi OF SPunit IS
   BEGIN
     
     SPaluUnit: SP_ALU  PORT MAP (q_SP,s_SP0,s_SPp2,s_SPm2,s_SPp4);
-    SPSmux:    MUX_4x1 PORT MAP (std_logic_vector(to_unsigned(2147483647,32)),s_SP0,s_SPp2,s_SPm2,SPS,outSPSm);
+    SPSmux:    MUX_4x1 PORT MAP (std_logic_vector(to_unsigned(2147483646,32)),s_SP0,s_SPp2,s_SPm2,SPS,outSPSm);
     SP2mux:    MUX_2x1 PORT MAP (outSPSm,s_SPp4,SP2,outSP2m);
     
     PROCESS(clk) IS
