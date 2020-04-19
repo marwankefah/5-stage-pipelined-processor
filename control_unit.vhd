@@ -4,14 +4,11 @@ use ieee.std_logic_1164.all;
 entity control_unit is 
 	port(
 		opcode : in std_logic_vector(5 downto 0);
-		int : in std_logic;
-		rst : in std_logic;
 		cntrl_sig : out std_logic_vector(32 downto 0)
 	);
 end control_unit;
 
 architecture control_unit_arch of control_unit is 
-	signal op_signals : std_logic_vector(32 downto 0);
 	-- opcodes
 	constant NOP_OP : std_logic_vector(5 downto 0) := "000000";
 	constant SETC_OP : std_logic_vector(5 downto 0) := "000001";
@@ -43,7 +40,7 @@ architecture control_unit_arch of control_unit is
 	constant RTI_OP : std_logic_vector(5 downto 0) := "011110";
 begin
 	with opcode select 
-		op_signals <= "000000000000000000100000000000000" when NOP_OP,
+		cntrl_sig <= "000000000000000000100000000000000" when NOP_OP,
 			      "000000000000100100100000000000000" when SETC_OP,
 			      "000000000000010100100000000000000" when CLRC_OP,
 			      "000000000100000100100000000000010" when NOT_OP,
@@ -72,9 +69,5 @@ begin
 			      "000000000000000001000000001001000" when RET_OP,
 			      "000000000000000000101000101001000" when RTI_OP,	
 			      "000000000000000000100000000000000" when others;
-			
-	cntrl_sig <= "000000000000001100000000101001000" when rst = '1' else
-		     "000000000000000000100100101001000" when int = '1' else
-		     op_signals;		
 end control_unit_arch;
 
