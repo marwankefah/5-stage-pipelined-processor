@@ -3,12 +3,12 @@ USE IEEE.std_logic_1164.all;
 use ieee.numeric_std.all;
 ENTITY Processor IS
 PORT (	--EXTERNAL INPUT
-	CLK:		std_logic;
-	Reset :	 	std_logic; 
-	INTR_IN:	std_logic;
-	IN_PORT:	std_logic_vector(31 DOWNTO 0);
+	CLK:		IN std_logic;
+	Reset :	 	IN std_logic; 
+	INTR_IN:	IN std_logic;
+	IN_PORT:	IN std_logic_vector(31 DOWNTO 0);
 	--OUTPUT
-	OUT_PORT:	std_logic_vector(31 DOWNTO 0)
+	OUT_PORT:	OUT std_logic_vector(31 DOWNTO 0)
 			);
 END Processor;
 
@@ -17,7 +17,19 @@ Architecture Processor_Archi of Processor IS
 
 
 
+COMPONENT reg is 
+	generic(
+		n : integer
+	);
 
+	port(
+		   clk : in std_logic;
+		   reset : in std_logic;
+		   en : in std_logic;
+		   d : in std_logic_vector(n-1 downto 0);
+		   q : out std_logic_vector(n-1 downto 0)
+	);
+end COMPONENT;
 COMPONENT Execute_Stage IS
 PORT (	--EXTERNAL INPUT
 CLK:		std_logic;
@@ -197,6 +209,18 @@ IF_STAGE: Execute_Stage  PORT MAP (	--EXTERNAL INPUT
 
 
 --END Execute STAGE 
+
+--OUTPUT REGISTER
+
+OUTPUT_PORT_REG : REG Generic map(32) port map(clk=>clk,
+					       reset=>reset,
+					       en=>ID_EX_OUT_EX(10),
+					       d=>EX_ALUResult,
+					       q=>OUT_PORT
+						);
+
+--END OUTPUT REGISTER
+
 
 
 --EXECUTE/MEM  BUFFER
