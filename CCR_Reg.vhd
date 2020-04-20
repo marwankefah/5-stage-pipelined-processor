@@ -14,7 +14,7 @@ entity CCR_Reg is
 	);
 end ccr_reg;
 
-architecture ccr_reg_arch of reg is
+architecture ccr_reg_arch of CCR_Reg is
 
 signal register_sig: std_logic_vector(3 downto 0);
 begin
