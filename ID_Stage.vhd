@@ -146,21 +146,35 @@ architecture ID_Stage_arch of ID_Stage is
 	signal jump_PC : std_logic_vector(31 downto 0);
 
 
-	-- ALIASES
-	alias instr_opcode : std_logic_vector(5 downto 0) is instr(15 downto 10);
-	alias instr_9to7 : std_logic_vector(2 downto 0) is instr(9 downto 7);
-	alias instr_6to4 : std_logic_vector(2 downto 0) is instr(6 downto 4);
-	alias instr_3to1 : std_logic_vector(2 downto 0) is instr(3 downto 1);
-	alias instr_31to16 : std_logic_vector(15 downto 0) is instr(31 downto 16);
-	alias instr_3to0 : std_logic_vector(3 downto 0) is instr(3 downto 0);
+	-- ALIASES AS SIGNALS
+	signal instr_opcode : std_logic_vector(5 downto 0);
+	signal instr_9to7 : std_logic_vector(2 downto 0);
+	signal instr_6to4 : std_logic_vector(2 downto 0);
+	signal instr_3to1 : std_logic_vector(2 downto 0);
+	signal instr_31to16 : std_logic_vector(15 downto 0);
+	signal instr_3to0 : std_logic_vector(3 downto 0);
 
-	alias c_RR1S : std_logic is cntrl_signals(32);
-	alias c_JCS : std_logic_vector(1 downto 0) is cntrl_signals(31 downto 30);
-	alias c_CALL : std_logic is cntrl_signals(29);
-	alias c_INPS : std_logic_vector(1 downto 0) is cntrl_signals(28 downto 27);
-	alias c_next_signals : std_logic_vector(26 downto 0) is cntrl_signals(26 downto 0);
+	signal c_RR1S : std_logic;
+	signal c_JCS : std_logic_vector(1 downto 0);
+	signal c_CALL : std_logic;
+	signal c_INPS : std_logic_vector(1 downto 0);
+	signal c_next_signals : std_logic_vector(26 downto 0);
 	
 begin
+	-- ALIASES AS SIGNALS
+	instr_opcode <= instr(15 downto 10);
+	instr_9to7 <= instr(9 downto 7);
+	instr_6to4 <= instr(6 downto 4);
+	instr_3to1 <= instr(3 downto 1);
+	instr_31to16 <= instr(31 downto 16);
+	instr_3to0 <= instr(3 downto 0);
+	
+	c_RR1S <= cntrl_signals(32);
+	c_JCS <= cntrl_signals(31 downto 30);
+	c_CALL <= cntrl_signals(29);
+	c_INPS <= cntrl_signals(28 downto 27);
+	c_next_signals <= cntrl_signals(26 downto 0);
+
 	-- CONTROL UNIT
 	ControlUnit : control_unit port map(instr_opcode,int,reset,cntrl_signals);
 
