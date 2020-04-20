@@ -18,7 +18,7 @@ Architecture Processor_Archi of Processor IS
 
 
 
-COMPONENT Fetch_Stage IS
+COMPONENT Execute_Stage IS
 PORT (	--EXTERNAL INPUT
 CLK:		std_logic;
 Reset :	 	std_logic; 
@@ -161,18 +161,18 @@ BEGIN
 
 
 
---DECODE/FETCH  BUFFER
+--DECODE/Execute  BUFFER
 
 
 
 
 
 
---END DECODE/FETCH  BUFFER
+--END DECODE/Execute  BUFFER
 
---FETCH STAGE 
+--EXecute STAGE 
 
-IF_STAGE: Fetch_Stage  PORT MAP (	--EXTERNAL INPUT
+IF_STAGE: Execute_Stage  PORT MAP (	--EXTERNAL INPUT
 				CLK=>		CLK	,
 				Reset =>	Reset	, 
 				EX_INTS=>	"01",		--TODO TO BE REPLACED WTH INT_HANDLING_UNIT OUTPUT
@@ -196,10 +196,10 @@ IF_STAGE: Fetch_Stage  PORT MAP (	--EXTERNAL INPUT
 			);
 
 
---END FETCH STAGE 
+--END Execute STAGE 
 
 
---FETCH/EXECUTE  BUFFER
+--EXECUTE/MEM  BUFFER
 EX_MEM_BUFF: EX_MEM_Buffer PORT MAP( 		 
 					Clk=>		CLK,
 					Rst=>		Reset,
@@ -258,7 +258,7 @@ EX_MEM_BUFF: EX_MEM_Buffer PORT MAP(
 
 
 
---END FETCH/EXECUTE  BUFFER
+--END EXECUTE/MEM  BUFFER
 
 
 

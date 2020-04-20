@@ -7,7 +7,7 @@
 LIBRARY IEEE;
 USE IEEE.std_logic_1164.all;
 use ieee.numeric_std.all;
-ENTITY Fetch_Stage IS
+ENTITY Execute_Stage IS
 PORT (	--EXTERNAL INPUT
 	clk:		std_logic;
 	reset :	 	std_logic; 
@@ -32,10 +32,10 @@ PORT (	--EXTERNAL INPUT
 	CCR:  	   OUT std_logic_vector(3 DOWNTO 0);
 	ALUResult: OUT std_logic_vector(31 DOWNTO 0)
 			);
-END Fetch_Stage;
+END Execute_Stage;
 
 
-Architecture Fetch_Stage_Archi of Fetch_Stage IS
+Architecture Execute_Stage_Archi of Execute_Stage IS
 COMPONENT CCR_Reg is 
 	port(
 		   clk : in std_logic;
@@ -164,7 +164,7 @@ CCR_REG_EX: CCR_Reg		 port map (
 		   			D_CCR=>flagsMuxOut,
 		   			Q_CCR=>CCR
 						);
-END Fetch_Stage_Archi;
+END Execute_Stage_Archi;
 
 
 
