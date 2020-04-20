@@ -30,13 +30,17 @@ architecture register_file_arch of register_file is
 	end component;
 
 	component MUX_4x1 IS
+		generic(
+			n : integer
+		);
+		
 		PORT( 
-			in0:  IN  std_logic_vector (31 DOWNTO 0);
-			in1:  IN  std_logic_vector (31 DOWNTO 0);
-			in2:  IN  std_logic_vector (31 DOWNTO 0);
-			in3:  IN  std_logic_vector (31 DOWNTO 0);
+			in0:  IN  std_logic_vector (n-1 DOWNTO 0);
+			in1:  IN  std_logic_vector (n-1 DOWNTO 0);
+			in2:  IN  std_logic_vector (n-1 DOWNTO 0);
+			in3:  IN  std_logic_vector (n-1 DOWNTO 0);
 			sel:  IN  std_logic_vector (1 DOWNTO 0);
-			outm: OUT std_logic_vector (31 DOWNTO 0)
+			outm: OUT std_logic_vector (n-1 DOWNTO 0)
 		);
 	END component;
 
@@ -66,14 +70,14 @@ begin
 	DS6 <= WA2(6) & WA1(6);	
 	DS7 <= WA2(7) & WA1(7);
 
-	MUX0 : MUX_4x1 port map(WD1,WD1,WD2,WD2,DS0,R0_input);
-	MUX1 : MUX_4x1 port map(WD1,WD1,WD2,WD2,DS1,R1_input);
-	MUX2 : MUX_4x1 port map(WD1,WD1,WD2,WD2,DS2,R2_input);
-	MUX3 : MUX_4x1 port map(WD1,WD1,WD2,WD2,DS3,R3_input);
-	MUX4 : MUX_4x1 port map(WD1,WD1,WD2,WD2,DS4,R4_input);
-	MUX5 : MUX_4x1 port map(WD1,WD1,WD2,WD2,DS5,R5_input);
-	MUX6 : MUX_4x1 port map(WD1,WD1,WD2,WD2,DS6,R6_input);
-	MUX7 : MUX_4x1 port map(WD1,WD1,WD2,WD2,DS7,R7_input);
+	MUX0 : MUX_4x1 generic map(32) port map(WD1,WD1,WD2,WD2,DS0,R0_input);
+	MUX1 : MUX_4x1 generic map(32) port map(WD1,WD1,WD2,WD2,DS1,R1_input);
+	MUX2 : MUX_4x1 generic map(32) port map(WD1,WD1,WD2,WD2,DS2,R2_input);
+	MUX3 : MUX_4x1 generic map(32) port map(WD1,WD1,WD2,WD2,DS3,R3_input);
+	MUX4 : MUX_4x1 generic map(32) port map(WD1,WD1,WD2,WD2,DS4,R4_input);
+	MUX5 : MUX_4x1 generic map(32) port map(WD1,WD1,WD2,WD2,DS5,R5_input);
+	MUX6 : MUX_4x1 generic map(32) port map(WD1,WD1,WD2,WD2,DS6,R6_input);
+	MUX7 : MUX_4x1 generic map(32) port map(WD1,WD1,WD2,WD2,DS7,R7_input);
 
 	en0 <= WA2(0) or WA1(0);
 	en1 <= WA2(1) or WA1(1);
