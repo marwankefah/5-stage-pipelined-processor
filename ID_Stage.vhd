@@ -90,53 +90,32 @@ architecture ID_Stage_arch of ID_Stage is
 	end component;
 
 	component MUX_4x1 IS
+		generic(
+			n : integer
+		);
+		
 		PORT( 
-			in0:  IN  std_logic_vector (31 DOWNTO 0);
-			in1:  IN  std_logic_vector (31 DOWNTO 0);
-			in2:  IN  std_logic_vector (31 DOWNTO 0);
-			in3:  IN  std_logic_vector (31 DOWNTO 0);
+			in0:  IN  std_logic_vector (n-1 DOWNTO 0);
+			in1:  IN  std_logic_vector (n-1 DOWNTO 0);
+			in2:  IN  std_logic_vector (n-1 DOWNTO 0);
+			in3:  IN  std_logic_vector (n-1 DOWNTO 0);
 			sel:  IN  std_logic_vector (1 DOWNTO 0);
-			outm: OUT std_logic_vector (31 DOWNTO 0)
+			outm: OUT std_logic_vector (n-1 DOWNTO 0)
 		);
 	END component;
 
 	component MUX_2x1 IS
-		PORT( 
-			in0:  IN  std_logic_vector (31 DOWNTO 0);
-			in1:  IN  std_logic_vector (31 DOWNTO 0);
-			sel:  IN  std_logic;
-			outm: OUT std_logic_vector (31 DOWNTO 0)
-		);
-	END component;
+		generic(
+			n : integer
+		);	
 
-	component MUX_4x1_27 IS
 		PORT( 
-			in0:  IN  std_logic_vector (26 DOWNTO 0);
-			in1:  IN  std_logic_vector (26 DOWNTO 0);
-			in2:  IN  std_logic_vector (26 DOWNTO 0);
-			in3:  IN  std_logic_vector (26 DOWNTO 0);
-			sel:  IN  std_logic_vector (1 DOWNTO 0);
-			outm: OUT std_logic_vector (26 DOWNTO 0)
-		);
-	END component;
-
-	component MUX_2x1_27 IS
-		PORT( 
-			in0:  IN  std_logic_vector (26 DOWNTO 0);
-			in1:  IN  std_logic_vector (26 DOWNTO 0);
+			in0:  IN  std_logic_vector (n-1 DOWNTO 0);
+			in1:  IN  std_logic_vector (n-1 DOWNTO 0);
 			sel:  IN  std_logic;
-			outm: OUT std_logic_vector (26 DOWNTO 0)
+			outm: OUT std_logic_vector (n-1 DOWNTO 0)
 		);
-	END component;
-
-	component MUX_2x1_3 IS
-		PORT( 
-			in0:  IN  std_logic_vector (2 DOWNTO 0);
-			in1:  IN  std_logic_vector (2 DOWNTO 0);
-			sel:  IN  std_logic;
-			outm: OUT std_logic_vector (2 DOWNTO 0)
-		);
-	END component;
+	END component;	
 
 	component MUX_4x1_1 IS
 		PORT( 
@@ -186,8 +165,8 @@ begin
 	ControlUnit : control_unit port map(instr_opcode,int,reset,cntrl_signals);
 
 	-- CONTROL SIGNALS
-	control_mux1 : MUX_2x1_27 port map(c_next_signals,ZERO,HZ_NOP,next_signals_stall);
-	control_mux2 : MUX_4x1_27 port map(PUSHF,next_signals_stall,POPF,ZERO,INS_ID,next_signals_hazard);
+	control_mux1 : MUX_2x1 generic map(27) port map(c_next_signals,ZERO,HZ_NOP,next_signals_stall);
+	control_mux2 : MUX_4x1 generic map(27) port map(PUSHF,next_signals_stall,POPF,ZERO,INS_ID,next_signals_hazard);
 	WB <= next_signals_hazard(4 downto 0);
 	MEM <=	next_signals_hazard(15 downto 5);
 	EX <= next_signals_hazard(26 downto 16);
@@ -202,10 +181,10 @@ begin
 	EAe <= "000000000000" & instr_3to0 & instr_31to16;
 
 	-- REGISTER FILE
-	RR1_MUX : MUX_2x1_3 port map(instr_9to7,instr_6to4,c_RR1S,regfile_RR1);
-	WD1_MUX : MUX_2x1 port map(MEM_WB_WB,MEM_WB_RD2,MEM_WB_WDRS,regfile_WD1);
+	RR1_MUX : MUX_2x1 generic map(3) port map(instr_9to7,instr_6to4,c_RR1S,regfile_RR1);
+	WD1_MUX : MUX_2x1 generic map(32) port map(MEM_WB_WB,MEM_WB_RD2,MEM_WB_WDRS,regfile_WD1);
 	regfile : register_file port map(clk,reset,MEM_WB_WE1R,MEM_WB_WE2R,regfile_RR1,instr_3to1,instr_9to7,instr_3to1,regfile_WD1,MEM_WB_WB,regfile_RD1,RD2);
-	RD1_MUX : MUX_4x1 port map(regfile_RD1,INport,IMMe_sig,IMMe_sig,c_INPS,RD1);
+	RD1_MUX : MUX_4x1 generic map(32) port map(regfile_RD1,INport,IMMe_sig,IMMe_sig,c_INPS,RD1);
 
 	-- OTHER SIGNALS
 	WR1 <= instr_9to7;
@@ -214,10 +193,10 @@ begin
 	RR1 <= instr_3to1;
 
 	-- BRANCHING SIGNALS
-	BranchRD1_MUX : MUX_4x1 port map(regfile_RD1,EX_MEM_ALUr,EX_MEM_RD2,EX_MEM_RD2,F_C,branch_RD1);
-	FlagSelector_MUX : MUX_4x1_1 port map(CCR(3),CCR(2),CCR(1),CCR(0),c_JCS,select_with_flag);
-	Branch_MUX1 : MUX_2x1 port map(PCnext,branch_RD1,select_with_flag,jump_PC); 
-	Branch_MUX2 : MUX_2x1 port map(jump_PC,branch_RD1,c_CALL,PCBranch);
+	BranchRD1_MUX : MUX_4x1 generic map(32) port map(regfile_RD1,EX_MEM_ALUr,EX_MEM_RD2,EX_MEM_RD2,F_C,branch_RD1);
+	FlagSelector_MUX : MUX_4x1_1 port map(CCR(0),CCR(1),CCR(2),CCR(3),c_JCS,select_with_flag);
+	Branch_MUX1 : MUX_2x1 generic map(32) port map(PCnext,branch_RD1,select_with_flag,jump_PC); 
+	Branch_MUX2 : MUX_2x1 generic map(32) port map(jump_PC,branch_RD1,c_CALL,PCBranch);
 	PCBranchS <= c_CALL or select_with_flag;
 	
 
