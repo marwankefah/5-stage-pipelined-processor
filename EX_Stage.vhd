@@ -105,7 +105,7 @@ EX_INT_MUX_MEM: MUX_4x1 generic map(11) port map(
 						);
 EX_INT_MUX_WB: MUX_4x1 generic map(5) port map(
 					in0 => RESETop(4 DOWNTO 0), 
-					in1 => ID_EX_MEM,
+					in1 => ID_EX_WB,
 					in2 => PUSHPC(4 DOWNTO 0) , 
 					in3 => (others=>'0'),
 					sel => EX_INTS,
