@@ -9,15 +9,8 @@ ENTITY MEMstage IS
 
 PORT (	
         clk:        IN  std_logic;
-		--Control Signals
-		MR:			IN  std_logic;
-		MW:			IN  std_logic;
-		--Selector Control Lines
-        SPS:        IN  std_logic_vector(1 DOWNTO 0);
-        SP2:        IN  std_logic;
-		WDS:		IN  std_logic_vector(1 DOWNTO 0);
-		DAS:		IN  std_logic_vector(1 DOWNTO 0);
-		INTCTRL:	IN  std_logic_vector(1 DOWNTO 0);
+		--Memory Control Register from previous buffer
+		EX_MEM_MEM:	IN 	std_logic_vector(10 DOWNTO 0);
 		--Data To Store
 		CCR:		IN 	std_logic_vector(3 DOWNTO 0);
 		PCnext:		IN 	std_logic_vector(31 DOWNTO 0);
@@ -100,9 +93,26 @@ ARCHITECTURE MEMstageArchi OF MEMstage IS
 	--reg signals
 	SIGNAL en: 			std_logic;
 	SIGNAL rst: 		std_logic;
+	--Control Signals
+	SIGNAL MR:			std_logic;
+	SIGNAL MW:			std_logic;
+	--Selector Control Lines
+    SIGNAL SPS:         std_logic_vector(1 DOWNTO 0);
+    SIGNAL SP2:         std_logic;
+	SIGNAL WDS:		    std_logic_vector(1 DOWNTO 0);
+	SIGNAL DAS:			std_logic_vector(1 DOWNTO 0);
+	SIGNAL INTCTRL:		std_logic_vector(1 DOWNTO 0);
 	
 	BEGIN
-		
+		--Control Signals
+		MR		<= 	EX_MEM_MEM(1);
+		MW  	<= 	EX_MEM_MEM(0);
+	--Selector Control Lines
+		SPS		<= 	EX_MEM_MEM(10 DOWNTO 9);
+		SP2		<= 	EX_MEM_MEM(8);
+		WDS		<= 	EX_MEM_MEM(5 DOWNTO 4);
+		DAS		<= 	EX_MEM_MEM(3 DOWNTO 2);
+		INTCTRL	<= 	EX_MEM_MEM(7 DOWNTO 6);
 		--Multiplexers to detemrine data and address
 		u_SP:		SPunit 	PORT MAP(clk,SPS,SP2,a_SP,a_SPp2,a_SPm2);
 		addrMUX: 	MUX_4x1 PORT MAP(a_SP,a_SPm2,intMUXout,EAe,DAS,addrMUXout);
