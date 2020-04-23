@@ -224,6 +224,62 @@ Architecture Processor_Archi of Processor IS
 			--END OUTPUT BUFFER			
 		);		  
 	END COMPONENT;
+	
+	COMPONENT MEMstage IS
+	PORT (
+        clk:        IN  std_logic;
+		--Memory Control Register from previous buffer
+		EX_MEM_MEM:	IN 	std_logic_vector(10 DOWNTO 0);
+		--Data To Store
+		CCR:		IN 	std_logic_vector(3 DOWNTO 0);
+		PCnext:		IN 	std_logic_vector(31 DOWNTO 0);
+		PC:			IN 	std_logic_vector(31 DOWNTO 0);
+		ALUResult: 	IN	std_logic_vector(31 DOWNTO 0);
+		--Addresses
+		EAe:		IN	std_logic_vector(31 DOWNTO 0);
+		--Data Loaded
+		RD:			OUT	std_logic_vector(31 DOWNTO 0)
+	);
+	END COMPONENT;
+	
+	COMPONENT MEM_WB_Buffer IS
+	PORT( 		 
+		Clk,Rst,en : IN std_logic;
+		
+		--BEGIN INPUT_BUFFER
+		  
+		--WB CONTROL REGISTER INPUT
+			D_WB : 		IN std_logic_vector(4 downto 0);
+		--END WB CONTROL REGISTER INPUT
+
+		--Memory Data REGISTER INPUT 
+			D_MemR: 		IN std_logic_vector (31 DOWNTO 0);
+			D_ALUResult:	IN std_logic_vector(31 DOWNTO 0);
+			D_RD2:			IN std_logic_vector(31 DOWNTO 0);
+			D_WR1:			IN std_logic_vector(2 DOWNTO 0);
+			D_WR2:			IN std_logic_vector(2 DOWNTO 0);
+		--END Memory Data REGISTER INPUT 
+
+		--END INPUT BUFFER
+
+		--BEGIN OUTPUT_BUFFER
+		
+		--WB CONTROL REGISTER OUTPUT
+			Q_WB :  OUT std_logic_vector(4 downto 0);
+		--END WB CONTROL REGISTER OUTPUT
+
+		--Memory Data REGISTER OUTPUT 
+			Q_MemR: 		OUT std_logic_vector (31 DOWNTO 0);
+			Q_ALUResult:	OUT std_logic_vector(31 DOWNTO 0);
+			Q_RD2:			OUT std_logic_vector(31 DOWNTO 0);
+			Q_WR1:			OUT std_logic_vector(2 DOWNTO 0);
+			Q_WR2:			OUT std_logic_vector(2 DOWNTO 0)
+		--Memory Data REGISTER OUTPUT 
+		   
+		--END OUTPUT BUFFER
+		
+	);
+	END COMPONENT;
 --=================================================================================================================================================
 	--FETCH STAGE OUTPUTS
 
@@ -305,28 +361,28 @@ Architecture Processor_Archi of Processor IS
 	Signal EX_MEM_OUT_EAe:		std_logic_vector(31 downto 0);
 	Signal EX_MEM_OUT_WR1:		std_logic_vector(2 downto 0);
 	Signal EX_MEM_OUT_WR2:		std_logic_vector(2 downto 0);
-	Signal EX_MEM_OUT_RR1:		std_logic_vector(2 downto 0);
-	Signal EX_MEM_OUT_RR2:		std_logic_vector(2 downto 0);
 	Signal EX_MEM_OUT_OPCODE:	std_logic_vector(5 downto 0);
 	Signal EX_MEM_OUT_INT:		std_logic;
 
 	--END EXECUTE/MEMORY BUFFER
 --=================================================================================================================================================
 	--MEMORY STAGE OUTPUTS
-
---AHMED
+	
+	Signal MEM_OUT_MEMR:		std_logic_vector(31 downto 0);
 
 	--END MEMORY STAGE OUTPUTS
 --=================================================================================================================================================	
 	--OUTPUT OF  MEMORY/WB BUFFER
 --AHMED
 --ANOUD	
+	--MEM Data outputs
+	signal MEM_WB_OUT_MEMR:		std_logic_vector(31 downto 0);
+	signal MEM_WB_OUT_ALUr:		std_logic_vector(31 downto 0);
 	signal MEM_WB_OUT_WR1 : 	std_logic_vector(2 downto 0);
 	signal MEM_WB_OUT_WR2 : 	std_logic_vector(2 downto 0);
 	signal MEM_WB_OUT_RD2 : 	std_logic_vector(31 downto 0);
-	signal MEM_WB_OUT_WE1R : 	std_logic;
-	signal MEM_WB_OUT_WE2R : 	std_logic;
-	signal MEM_WB_OUT_WDRS : 	std_logic;
+	--WB Control Register Output
+	signal MEM_WB_OUT_WB  :		std_logic_vector(4 downto 0);
 
 	--END MEMORY/WB BUFFER
 --=================================================================================================================================================
@@ -334,7 +390,7 @@ Architecture Processor_Archi of Processor IS
 --ANOUD
 	signal WB_OUT_WB : 		std_logic_vector(31 downto 0);
 
-	--END WRITE BACK STAGE OUPUTS
+	--END WRITE BACK STAGE OUTPUTS
 --=================================================================================================================================================
 BEGIN
 	--FETCH STAGE
@@ -560,8 +616,6 @@ BEGIN
 			Q_EAe		=>	EX_MEM_OUT_EAe,
 			Q_WR1		=>	EX_MEM_OUT_WR1,
 			Q_WR2		=>	EX_MEM_OUT_WR2,
-			Q_RR1		=>	EX_MEM_OUT_RR1,
-			Q_RR2		=>	EX_MEM_OUT_RR2,
 			--END Execute Data PROPAGATION
 			--OTHER PROPAGATION
 			Q_OPCODE	=>	EX_MEM_OUT_OPCODE,
@@ -573,15 +627,47 @@ BEGIN
 	--END EXECUTE/MEM  BUFFER
 --=================================================================================================================================================
 	--MEMORY STAGE
-
---AHMED
+	MEMORY_STAGE: MEMStage
+		port map(
+			--INPUTS	
+			clk		=> CLK,
+			--From previous buffer
+			--Control Register
+			EX_MEM_MEM 	=> 	EX_MEM_OUT_MEM,
+			--Data To Store
+			CCR			=>	EX_MEM_OUT_CCR,
+			PCnext		=>	EX_MEM_OUT_PCnext,
+			PC			=>	EX_MEM_OUT_PC,
+			ALUResult 	=>	EX_MEM_OUT_ALUResult,
+			--Addresses
+			EAe			=> 	EX_MEM_OUT_EAe,
+			--OUTPUTS
+			--Data Loaded
+			RD			=>	MEM_OUT_MEMR
+		);
 
 	--END MEMORY STAGE
 --=================================================================================================================================================
 	--MEM/WB BUFFER
-
---AHMED
-
+	MEM_WB_BUFF: MEM_WB_Buffer
+		port map(
+			clk		=>	CLK,
+			rst	=>	Reset,
+			en		=>	'1',
+		-- INPUTS
+			D_WB 		=>	EX_MEM_OUT_WB,
+			D_MemR 		=> 	MEM_OUT_MEMR,
+			D_ALUResult => 	EX_MEM_OUT_ALUResult,
+			D_RD2		=>	EX_MEM_OUT_RD2,
+			D_WR1		=>	EX_MEM_OUT_WR1,
+			D_WR2		=>	EX_MEM_OUT_WR2,
+		-- OUTPUTS	
+			Q_WB 		=> 	MEM_WB_OUT_WB,
+			Q_ALUResult => 	MEM_WB_OUT_ALUr,
+			Q_RD2		=> 	MEM_WB_OUT_RD2,
+			Q_WR1		=> 	MEM_WB_OUT_WR1,
+			Q_WR2		=> 	MEM_WB_OUT_WR2
+		);	
 	--END MEM/WB BUFFER
 --=================================================================================================================================================
 	--WRITE BACK STAGE
