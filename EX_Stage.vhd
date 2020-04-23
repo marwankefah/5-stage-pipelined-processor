@@ -138,7 +138,7 @@ Bmux: MUX_4x1 generic map(32) port map (
 					sel => B,
 					outm=> BmuxOut
 						);
-ALU_instance: ALU 	 generic map(32) port map(
+ALU_instance: ALU 	port map(
 					inA    =>AmuxOut,
 					inB    =>BmuxOut,
 					sel    =>ID_EX_EX(7 DOWNTO 5),  --ALUOP
