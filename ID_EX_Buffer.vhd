@@ -6,40 +6,40 @@ entity ID_EX_Buffer is
 		clk, reset, en : std_logic;
 		
 		-- INPUTS 
-		D_WB : in std_logic_vector(4 downto 0);
-		D_MEM : in std_logic_vector(10 downto 0);
-		D_EX : in std_logic_vector(10 downto 0);
-		D_opcode : in std_logic_vector(5 downto 0);
-		D_INPS : in std_logic_vector(1 downto 0);
-		D_int : in std_logic;
-		D_PC : in std_logic_vector(31 downto 0);
-		D_PCnext : in std_logic_vector(31 downto 0);
-		D_RD1 : in std_logic_vector(31 downto 0);
-		D_RD2 : in std_logic_vector(31 downto 0);
-		D_IMMe : in std_logic_vector(31 downto 0);
-		D_EAe : in std_logic_vector(31 downto 0);
-		D_WR1 : in std_logic_vector(2 downto 0);
-		D_WR2 : in std_logic_vector(2 downto 0);
-		D_RR1 : in std_logic_vector(2 downto 0);
-		D_RR2 : in std_logic_vector(2 downto 0);
+		D_WB : 		in std_logic_vector(4 downto 0);
+		D_MEM : 	in std_logic_vector(10 downto 0);
+		D_EX : 		in std_logic_vector(10 downto 0);
+		D_opcode : 	in std_logic_vector(5 downto 0);
+		D_INPS : 	in std_logic_vector(1 downto 0);
+		D_int : 	in std_logic;
+		D_PC : 		in std_logic_vector(31 downto 0);
+		D_PCnext : 	in std_logic_vector(31 downto 0);
+		D_RD1 : 	in std_logic_vector(31 downto 0);
+		D_RD2 : 	in std_logic_vector(31 downto 0);
+		D_IMMe : 	in std_logic_vector(31 downto 0);
+		D_EAe : 	in std_logic_vector(31 downto 0);
+		D_WR1 : 	in std_logic_vector(2 downto 0);
+		D_WR2 : 	in std_logic_vector(2 downto 0);
+		D_RR1 : 	in std_logic_vector(2 downto 0);
+		D_RR2 : 	in std_logic_vector(2 downto 0);
 
 		-- OUTPUTS
-		Q_WB : out std_logic_vector(4 downto 0);
-		Q_MEM : out std_logic_vector(10 downto 0);
-		Q_EX : out std_logic_vector(10 downto 0);
-		Q_opcode : out std_logic_vector(5 downto 0);
-		Q_INPS : out std_logic_vector(1 downto 0);
-		Q_int : out std_logic;
-		Q_PC : out std_logic_vector(31 downto 0);
-		Q_PCnext : out std_logic_vector(31 downto 0);
-		Q_RD1 : out std_logic_vector(31 downto 0);
-		Q_RD2 : out std_logic_vector(31 downto 0);
-		Q_IMMe : out std_logic_vector(31 downto 0);
-		Q_EAe : out std_logic_vector(31 downto 0);
-		Q_WR1 : out std_logic_vector(2 downto 0);
-		Q_WR2 : out std_logic_vector(2 downto 0);
-		Q_RR1 : out std_logic_vector(2 downto 0);
-		Q_RR2 : out std_logic_vector(2 downto 0)
+		Q_WB : 		out std_logic_vector(4 downto 0);
+		Q_MEM : 	out std_logic_vector(10 downto 0);
+		Q_EX : 		out std_logic_vector(10 downto 0);
+		Q_opcode : 	out std_logic_vector(5 downto 0);
+		Q_INPS : 	out std_logic_vector(1 downto 0);
+		Q_int : 	out std_logic;
+		Q_PC : 		out std_logic_vector(31 downto 0);
+		Q_PCnext : 	out std_logic_vector(31 downto 0);
+		Q_RD1 : 	out std_logic_vector(31 downto 0);
+		Q_RD2 : 	out std_logic_vector(31 downto 0);
+		Q_IMMe : 	out std_logic_vector(31 downto 0);
+		Q_EAe : 	out std_logic_vector(31 downto 0);
+		Q_WR1 : 	out std_logic_vector(2 downto 0);
+		Q_WR2 : 	out std_logic_vector(2 downto 0);
+		Q_RR1 : 	out std_logic_vector(2 downto 0);
+		Q_RR2 : 	out std_logic_vector(2 downto 0)
 	);
 end ID_EX_Buffer;
 
