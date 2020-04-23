@@ -21,6 +21,7 @@ PORT (
 		--Data To Store
 		CCR:		IN 	std_logic_vector(3 DOWNTO 0);
 		PCnext:		IN 	std_logic_vector(31 DOWNTO 0);
+		PC:			IN 	std_logic_vector(31 DOWNTO 0);
 		ALUResult: 	IN	std_logic_vector(31 DOWNTO 0);
 		--Addresses
 		EAe:		IN	std_logic_vector(31 DOWNTO 0);
