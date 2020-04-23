@@ -71,6 +71,21 @@ ARCHITECTURE MEMstageArchi OF MEMstage IS
 		);
 	END COMPONENT;
 	
+	--1 bit register unit
+	COMPONENT reg is 
+	generic(
+		n : integer
+	);
+
+	port(
+		   clk : in std_logic;
+		   reset : in std_logic;
+		   en : in std_logic;
+		   d : in std_logic_vector(n-1 downto 0);
+		   q : out std_logic_vector(n-1 downto 0)
+	);
+	end COMPONENT;
+
 	--address selection
 	SIGNAL a_SP	:		std_logic_vector(31 DOWNTO 0);
 	SIGNAL a_SPp2:		std_logic_vector(31 DOWNTO 0);
@@ -78,9 +93,13 @@ ARCHITECTURE MEMstageArchi OF MEMstage IS
 	SIGNAL addrMUXout:	std_logic_vector(31 DOWNTO 0);
 	SIGNAL intMUXout:	std_logic_vector(31 DOWNTO 0);
 	--data selection
+	SIGNAL d_CCR: std_logic_vector(31 DOWNTO 0);
 	SIGNAL q_PC:		std_logic_vector(31 DOWNTO 0);
 	SIGNAL q_CCR:		std_logic_vector(31 DOWNTO 0);
 	SIGNAL dataMUXout:	std_logic_vector(31 DOWNTO 0); 
+	--reg signals
+	SIGNAL en: 			std_logic;
+	SIGNAL rst: 		std_logic;
 	
 	BEGIN
 		
@@ -93,13 +112,11 @@ ARCHITECTURE MEMstageArchi OF MEMstage IS
 		datamem:	DataMemory PORT MAP(addrMUXout,dataMUXout,RD,MW,MR,clk);
 		
 		--Writing on CCR and PC registers
-		PROCESS (clk) IS
-			BEGIN
-				IF falling_edge(clk) THEN
-					q_PC <=PCnext;
-					q_CCR <= std_logic_vector(to_unsigned(0,28)) & CCR;
-				END IF;
-		END PROCESS;
+		en <= '1';
+		rst <= '0';
+		d_CCR <= (std_logic_vector(to_unsigned(0,28)) & CCR);
+		PC_reg: 	reg GENERIC MAP (32) PORT MAP(clk,rst,en,PC,q_PC);
+		CCR_reg:	reg GENERIC MAP (32) PORT MAP(clk,rst,en,d_CCR,q_CCR);
 	
 END MEMstageArchi;
 	
