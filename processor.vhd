@@ -29,6 +29,44 @@ Architecture Processor_Archi of Processor IS
 			q : out std_logic_vector(n-1 downto 0)
 		);
 	end COMPONENT;
+	
+	COMPONENT IF_Stage IS
+  PORT (
+       PCbranch:   IN std_logic_vector(31 downto 0);
+       BranchS:    IN std_logic;
+       WB:         IN std_logic_vector(31 downto 0);
+       PCS:        IN std_logic;
+       NOP:        IN std_logic;
+       clk:        IN std_logic;
+       CurrentPC:  OUT std_logic_vector(31 downto 0);
+       PCnext:     OUT std_logic_vector(31 downto 0);
+       Instruction:OUT std_logic_vector(31 downto 0) 
+              
+     );
+  END COMPONENT;
+
+  COMPONENT IF_ID_Buffer IS
+  PORT( 		 
+		clk,reset,en : IN std_logic;
+		
+		-- INPUTS
+		d_PC:          IN std_logic_vector(31 DOWNTO 0);
+    d_PCnext:      IN std_logic_vector(31 DOWNTO 0);
+    d_Instruction: IN std_logic_vector(31 DOWNTO 0);
+    d_INPORT:      IN std_logic_vector(31 DOWNTO 0);
+    NOP:           IN std_logic;
+    IF_FLUSH:      IN std_logic;
+    d_INT:         IN std_logic;
+       
+    -- OUTPUTS
+    q_PC:          OUT std_logic_vector(31 DOWNTO 0);
+    q_PCnext:      OUT std_logic_vector(31 DOWNTO 0);   
+    q_Instruction: OUT std_logic_vector(31 DOWNTO 0);
+    q_INPORT:      OUT std_logic_vector(31 DOWNTO 0);
+    q_INT:         OUT std_logic 
+   
+     );
+  END COMPONENT;
 
 	component ID_Stage is
 		port(
@@ -280,10 +318,25 @@ Architecture Processor_Archi of Processor IS
 		
 	);
 	END COMPONENT;
+	
+	COMPONENT MUX_2x1 IS
+	generic(
+		n : integer
+	);	
+	PORT( 
+		in0:  IN  std_logic_vector (n-1 DOWNTO 0);
+		in1:  IN  std_logic_vector (n-1 DOWNTO 0);
+		sel:  IN  std_logic;
+		outm: OUT std_logic_vector (n-1 DOWNTO 0)
+	);
+  END COMPONENT;
 --=================================================================================================================================================
 	--FETCH STAGE OUTPUTS
 
 --ANOUD
+  signal IF_OUT_PC: std_logic_vector(31 downto 0);
+  signal IF_OUT_PCnext: std_logic_vector(31 downto 0); 
+  signal IF_OUT_instr: std_logic_vector(31 downto 0);
 
 	--END FETCH STAGE OUTPUTS
 --=================================================================================================================================================
@@ -395,13 +448,51 @@ Architecture Processor_Archi of Processor IS
 BEGIN
 	--FETCH STAGE
 
---ANOUD
+ Fetch_Stage : IF_Stage
+   port map(
+     
+ 		clk 		=>	CLK,
+		PCbranch => ID_OUT_PCBranch,
+		BranchS => ID_OUT_PCBranchS,
+		WB => WB_OUT_WB,
+		PCS => MEM_WB_OUT_WB(3),
+		NOP => '0',   --TODO to be replaced with hazard hazard detection unit output
+		CurrentPC => IF_OUT_PC,
+		PCnext => IF_OUT_PCnext,
+		Instruction => IF_OUT_instr
+		
+		);		   
 
 	--END FETCH STAGE
 --=================================================================================================================================================
 	--FETCH/DECODE BUFFER
-
+	
 --ANOUD
+  	IF_ID_BUFF : If_ID_Buffer
+		port map(
+		  
+			clk		=>	CLK,
+			reset		=>	Reset,
+			en		=>	'1',
+			
+			--INPUTS
+			d_PC => IF_OUT_PC,
+			d_PCnext => IF_OUT_PCnext,
+			d_Instruction => IF_OUT_instr,
+			d_INPORT => IN_PORT,
+			NOP => '0',       --TODO to be replaced with hazard hazard detection unit output
+			IF_FLUSH => '0',  --TODO to be replaced with hazard hazard detection unit output
+			d_INT => INTR_IN,
+			
+			--OUTPUTS
+			q_PC => IF_ID_OUT_PC,
+			q_PCnext => IF_ID_OUT_PCnext,
+			q_Instruction => IF_ID_OUT_instr,
+			q_INPORT => IF_ID_OUT_INport,
+			q_INT => IF_ID_OUT_int
+			
+			);
+			
 
 	--END FETCH/DECODE BUFFER
 --=================================================================================================================================================
@@ -673,6 +764,7 @@ BEGIN
 	--WRITE BACK STAGE
 
 --ANOUD
+WB_Stage_MUX : MUX_2x1 generic map(32) port map(MEM_WB_OUT_ALUr,MEM_WB_OUT_MEMR,MEM_WB_OUT_WB(4),WB_OUT_WB);
 
 	--END WRITE BACK STAGE 
 END Processor_Archi;
