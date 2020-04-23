@@ -24,20 +24,19 @@ LIBRARY IEEE;
 USE IEEE.std_logic_1164.all;
 use ieee.numeric_std.all;
 ENTITY ALU IS
-GENERIC (n : integer := 32);
-PORT (	inA:IN std_logic_vector(n-1 DOWNTO 0);
- 	inB : IN std_logic_vector(n-1 DOWNTO 0) ;
+PORT (	inA:IN std_logic_vector(31 DOWNTO 0);
+ 	inB : IN std_logic_vector(31 DOWNTO 0) ;
 	sel: IN std_logic_vector (2 DOWNTO 0);
-	ALUOut: OUT std_logic_vector(n-1 DOWNTO 0);
-	CCR : OUT std_logic_vector(2 DOWNTO 0));
+	ALUOut: OUT std_logic_vector(31 DOWNTO 0);
+	CCR : OUT std_logic_vector(3 DOWNTO 0));
 END ALU;
 
 
 
 Architecture ALUArchi of ALU IS
-signal extendedOutput:  unsigned(n DOWNTO 0):=(others=>'0');
-signal inAUnsigned:	unsigned(n-1 DOWNTO 0);
-signal inBUnsigned:	unsigned(n-1 DOWNTO 0);
+signal extendedOutput:  unsigned(32 DOWNTO 0):=(others=>'0');
+signal inAUnsigned:	unsigned(31 DOWNTO 0);
+signal inBUnsigned:	unsigned(31 DOWNTO 0);
 
 Begin
 
@@ -58,11 +57,11 @@ when "100"   =>   extendedOutput<= '0'& (not inAUnsigned);
 
 when "101"   =>   
 if shiftCount>0 and shiftCount<33 then
- 		  extendedOutput<= inAUnsigned(n-shiftCount)& unsigned(std_logic_vector(shift_left(inAUnsigned,shiftCount))); -- Shift left
+ 		  extendedOutput<= inAUnsigned(32-shiftCount)& unsigned(std_logic_vector(shift_left(inAUnsigned,shiftCount))); -- Shift left
 ELSIF shiftCount=0 THEN
 		  extendedOutput<= '0'& inAUnsigned;
 ELSE 
-		  extendedOutput<= (extendedOutput(n DOWNTO 0)'range => '0');
+		  extendedOutput<= (extendedOutput(32 DOWNTO 0)'range => '0');
 end if;
 
 when "110"   => 
@@ -71,23 +70,25 @@ IF shiftCount>0 and shiftCount<33 THEN
 ELSIF shiftCount=0 THEN
 		  extendedOutput<= '0'& inAUnsigned;
 ELSE 
-		  extendedOutput<= (extendedOutput(n DOWNTO 0)'range => '0');
+		  extendedOutput<= (extendedOutput(32 DOWNTO 0)'range => '0');
 END IF;
 
 when "111"   =>   extendedOutput<= '0'& inAUnsigned;
-when others  =>   extendedOutput<= (extendedOutput(n DOWNTO 0)'range => '0');
+when others  =>   extendedOutput<= (extendedOutput(32 DOWNTO 0)'range => '0');
 end case; 
-
 end process;
 
+
+
 --Output after operation
-ALUOut<=std_logic_vector(extendedOutput(n-1 DOWNTO 0));
+ALUOut<=std_logic_vector(extendedOutput(31 DOWNTO 0));
 -- Zero Flag
-CCR(0)<='1' when extendedOutput(n-1 DOWNTO 0) = (extendedOutput(n-1 DOWNTO 0)'range => '0') else '0';
+CCR(0)<='1' when extendedOutput(31 DOWNTO 0) = (extendedOutput(31 DOWNTO 0)'range => '0') else '0';
 --Negative Flag knows as Sign Flag
-CCR(1)<=extendedOutput(n-1);
+CCR(1)<=extendedOutput(31);
 --Carry out flag
-CCR(2)<=extendedOutput(n);
+CCR(2)<=extendedOutput(32);
+CCR(3)<='0';
 END ALUArchi;
 
 
