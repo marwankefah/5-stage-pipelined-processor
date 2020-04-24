@@ -21,7 +21,9 @@ END  IF_Stage;
 ARCHITECTURE IF_Archi OF IF_Stage IS
 
   COMPONENT MUX_2x1 IS
-
+  generic(
+		n : integer
+	 );	
 	PORT( 
 			in0:  IN  std_logic_vector (31 DOWNTO 0);
 			in1:  IN  std_logic_vector (31 DOWNTO 0);
@@ -71,8 +73,8 @@ SIGNAL ImemOut:   std_logic_vector(31 DOWNTO 0);
 
   
 BEGIN 
-  b_MUX:  MUX_2x1 PORT MAP(PCbranch,a_PCnext,BranchS,b_MUXout);
-  pc_MUX: MUX_2x1 PORT MAP(b_MUXout,WB,PCS,pc_MUXout);
+  b_MUX:  MUX_2x1 GENERIC MAP (32) PORT MAP(PCbranch,a_PCnext,BranchS,b_MUXout);
+  pc_MUX: MUX_2x1 GENERIC MAP (32) PORT MAP(b_MUXout,WB,PCS,pc_MUXout);
     
   pcReg: PC PORT MAP(clk,pc_MUXout,pcRegOut,NOP);
     
