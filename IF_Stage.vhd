@@ -11,6 +11,7 @@ PORT (
        PCS:        IN std_logic;
        NOP:        IN std_logic;
        clk:        IN std_logic;
+       CurrentPC:  OUT std_logic_vector(31 downto 0);
        PCnext:     OUT std_logic_vector(31 downto 0);
        Instruction:OUT std_logic_vector(31 downto 0) 
               
@@ -78,7 +79,8 @@ BEGIN
   I_mem: InstructionMemory PORT MAP(pcRegOut,ImemOut,clk);
   
   pc_Add: PCAdder PORT MAP(pcRegOut,InstSel,a_PCnext);
-   
+  
+  CurrentPC <=  pcRegOut;
   InstSel <= ImemOut(15);  
   PCnext  <= a_PCnext;
   Instruction <= ImemOut;

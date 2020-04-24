@@ -23,7 +23,8 @@ PORT(
 
 
 			--Execute Data PROPAGATION
-				D_ALUResult:	IN stD_logic_vector(31 DOWNTO 0);
+				D_CCR : 		IN std_logic_vector(3 downto 0);
+				D_ALUResult:		IN stD_logic_vector(31 DOWNTO 0);
 				D_PC : 			IN std_logic_vector(31 downto 0);
  				D_PCnext : 		IN std_logic_vector(31 downto 0);
 				D_RD1:			IN stD_logic_vector(31 DOWNTO 0);
@@ -55,6 +56,7 @@ PORT(
 
 
 			--Execute Data PROPAGATION
+			Q_CCR : 	OUT std_logic_vector(3 downto 0);
 			Q_ALUResult:	OUT stD_logic_vector(31 DOWNTO 0);
  			Q_PC:	 	OUT stD_logic_vector(31 DOWNTO 0);
 			Q_PCnext:	OUT stD_logic_vector(31 DOWNTO 0);
@@ -117,6 +119,7 @@ BEGIN
 			--END MEMORY CONTROL PROPAGATION
 
 			--Execute Data PROPAGATION
+	EX_CCR_Reg:		Reg generic map(4) port map(Clk,Rst,en,D_CCR,Q_CCR);
 	EX_PC_Reg:		Reg generic map(32) port map(Clk,Rst,en,D_PC,Q_PC);
 	EX_PCnext_Reg:		Reg generic map(32) port map(Clk,Rst,en,D_PCnext,Q_PCnext);
 	EX_ALURes_Reg:		Reg generic map(32) port map(Clk,Rst,en,D_ALUResult,Q_ALUResult);
