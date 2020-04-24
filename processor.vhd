@@ -229,8 +229,6 @@ Architecture Processor_Archi of Processor IS
 			D_EAe:		IN stD_logic_vector(31 DOWNTO 0);
 			D_WR1:		IN stD_logic_vector(2 DOWNTO 0);
 			D_WR2:		IN stD_logic_vector(2 DOWNTO 0);
-			D_RR1:		IN stD_logic_vector(2 DOWNTO 0);
-			D_RR2:		IN stD_logic_vector(2 DOWNTO 0);
 			--END Execute Data PROPAGATION
 			--OTHER PROPAGATION
 			D_OPCODE:	IN stD_logic_vector(5 DOWNTO 0);
@@ -254,8 +252,6 @@ Architecture Processor_Archi of Processor IS
 			Q_EAe:		OUT stD_logic_vector(31 DOWNTO 0);
 			Q_WR1:		OUT stD_logic_vector(2 DOWNTO 0);
 			Q_WR2:		OUT stD_logic_vector(2 DOWNTO 0);
-			Q_RR1:		OUT stD_logic_vector(2 DOWNTO 0);
-			Q_RR2:		OUT stD_logic_vector(2 DOWNTO 0);
 			--END Execute Data PROPAGATION
 			--OTHER PROPAGATION
 			Q_OPCODE:	OUT stD_logic_vector(5 DOWNTO 0);
@@ -695,8 +691,6 @@ BEGIN
 			D_EAe		=>	ID_EX_OUT_EAe,
 			D_WR1		=>	ID_EX_OUT_WR1,
 			D_WR2		=>	ID_EX_OUT_WR2,
-			D_RR1		=>	ID_EX_OUT_RR1,
-			D_RR2		=>	ID_EX_OUT_RR2,
 			--END Execute Data PROPAGATION
 			--OTHER PROPAGATION
 			D_OPCODE	=>	ID_EX_OUT_OPCODE,
