@@ -86,7 +86,6 @@ ARCHITECTURE MEMstageArchi OF MEMstage IS
 	SIGNAL addrMUXout:	std_logic_vector(31 DOWNTO 0);
 	SIGNAL intMUXout:	std_logic_vector(31 DOWNTO 0);
 	--data selection
-	SIGNAL d_CCR: std_logic_vector(31 DOWNTO 0);
 	SIGNAL q_PC:		std_logic_vector(31 DOWNTO 0);
 	SIGNAL q_CCR:		std_logic_vector(31 DOWNTO 0);
 	SIGNAL dataMUXout:	std_logic_vector(31 DOWNTO 0); 
@@ -124,9 +123,8 @@ ARCHITECTURE MEMstageArchi OF MEMstage IS
 		--Writing on CCR and PC registers
 		en <= '1';
 		rst <= '0';
-		d_CCR <= (std_logic_vector(to_unsigned(0,28)) & CCR);
+		q_CCR <= (std_logic_vector(to_unsigned(0,28)) & CCR);
 		PC_reg: 	reg GENERIC MAP (32) PORT MAP(clk,rst,en,PC,q_PC);
-		CCR_reg:	reg GENERIC MAP (32) PORT MAP(clk,rst,en,d_CCR,q_CCR);
 	
 END MEMstageArchi;
 	
