@@ -31,42 +31,42 @@ Architecture Processor_Archi of Processor IS
 	end COMPONENT;
 	
 	COMPONENT IF_Stage IS
-  PORT (
-       PCbranch:   IN std_logic_vector(31 downto 0);
-       BranchS:    IN std_logic;
-       WB:         IN std_logic_vector(31 downto 0);
-       PCS:        IN std_logic;
-       NOP:        IN std_logic;
-       clk:        IN std_logic;
-       CurrentPC:  OUT std_logic_vector(31 downto 0);
-       PCnext:     OUT std_logic_vector(31 downto 0);
-       Instruction:OUT std_logic_vector(31 downto 0) 
+		PORT (
+			PCbranch:   IN std_logic_vector(31 downto 0);
+			BranchS:    IN std_logic;
+			WB:         IN std_logic_vector(31 downto 0);
+			PCS:        IN std_logic;
+			NOP:        IN std_logic;
+			clk:        IN std_logic;
+			CurrentPC:  OUT std_logic_vector(31 downto 0);
+			PCnext:     OUT std_logic_vector(31 downto 0);
+       			Instruction:OUT std_logic_vector(31 downto 0) 
               
-     );
-  END COMPONENT;
+		);
+	END COMPONENT;
 
-  COMPONENT IF_ID_Buffer IS
-  PORT( 		 
-		clk,reset,en : IN std_logic;
+	COMPONENT IF_ID_Buffer IS
+		PORT( 		 
+			clk,reset,en : IN std_logic;
 		
-		-- INPUTS
-		d_PC:          IN std_logic_vector(31 DOWNTO 0);
-    d_PCnext:      IN std_logic_vector(31 DOWNTO 0);
-    d_Instruction: IN std_logic_vector(31 DOWNTO 0);
-    d_INPORT:      IN std_logic_vector(31 DOWNTO 0);
-    NOP:           IN std_logic;
-    IF_FLUSH:      IN std_logic;
-    d_INT:         IN std_logic;
+			-- INPUTS
+			d_PC:          IN std_logic_vector(31 DOWNTO 0);
+			d_PCnext:      IN std_logic_vector(31 DOWNTO 0);
+			d_Instruction: IN std_logic_vector(31 DOWNTO 0);
+			d_INPORT:      IN std_logic_vector(31 DOWNTO 0);
+			NOP:           IN std_logic;
+			IF_FLUSH:      IN std_logic;
+			d_INT:         IN std_logic;
        
-    -- OUTPUTS
-    q_PC:          OUT std_logic_vector(31 DOWNTO 0);
-    q_PCnext:      OUT std_logic_vector(31 DOWNTO 0);   
-    q_Instruction: OUT std_logic_vector(31 DOWNTO 0);
-    q_INPORT:      OUT std_logic_vector(31 DOWNTO 0);
-    q_INT:         OUT std_logic 
+			-- OUTPUTS
+			q_PC:          OUT std_logic_vector(31 DOWNTO 0);
+			q_PCnext:      OUT std_logic_vector(31 DOWNTO 0);   
+			q_Instruction: OUT std_logic_vector(31 DOWNTO 0);
+			q_INPORT:      OUT std_logic_vector(31 DOWNTO 0);
+			q_INT:         OUT std_logic 
    
-     );
-  END COMPONENT;
+		);
+	END COMPONENT;
 
 	component ID_Stage is
 		port(
@@ -220,6 +220,7 @@ Architecture Processor_Archi of Processor IS
 			D_MEM:	 	IN std_logic_vector(10 downto 0);
 			--END MEMORY CONTROL PROPAGATION
 			--Execute Data PROPAGATION
+			D_CCR : 	IN std_logic_vector(3 downto 0);
 			D_ALUResult:	IN stD_logic_vector(31 DOWNTO 0);
 			D_PC: 		IN std_logic_vector(31 downto 0);
 			D_PCnext: 	IN std_logic_vector(31 downto 0);
@@ -244,6 +245,7 @@ Architecture Processor_Archi of Processor IS
 			Q_MEM:	 	OUT std_logic_vector(10 downto 0);
 			--END MEMORY CONTROL PROPAGATION
 			--Execute Data PROPAGATION
+			Q_CCR : 	OUT std_logic_vector(3 downto 0);
 			Q_ALUResult:	OUT stD_logic_vector(31 DOWNTO 0);
 			Q_PC:	 	OUT stD_logic_vector(31 DOWNTO 0);
 			Q_PCnext:	OUT stD_logic_vector(31 DOWNTO 0);
@@ -264,84 +266,84 @@ Architecture Processor_Archi of Processor IS
 	END COMPONENT;
 	
 	COMPONENT MEMstage IS
-	PORT (
+		PORT (
         clk:        IN  std_logic;
-		--Memory Control Register from previous buffer
-		EX_MEM_MEM:	IN 	std_logic_vector(10 DOWNTO 0);
-		--Data To Store
-		CCR:		IN 	std_logic_vector(3 DOWNTO 0);
-		PCnext:		IN 	std_logic_vector(31 DOWNTO 0);
-		PC:			IN 	std_logic_vector(31 DOWNTO 0);
-		ALUResult: 	IN	std_logic_vector(31 DOWNTO 0);
-		--Addresses
-		EAe:		IN	std_logic_vector(31 DOWNTO 0);
-		--Data Loaded
-		RD:			OUT	std_logic_vector(31 DOWNTO 0)
-	);
+			--Memory Control Register from previous buffer
+			EX_MEM_MEM:	IN 	std_logic_vector(10 DOWNTO 0);
+			--Data To Store
+			CCR:		IN 	std_logic_vector(3 DOWNTO 0);
+			PCnext:		IN 	std_logic_vector(31 DOWNTO 0);
+			PC:		IN 	std_logic_vector(31 DOWNTO 0);
+			ALUResult: 	IN	std_logic_vector(31 DOWNTO 0);
+			--Addresses
+			EAe:		IN	std_logic_vector(31 DOWNTO 0);
+			--Data Loaded
+			RD:		OUT	std_logic_vector(31 DOWNTO 0)
+		);
 	END COMPONENT;
 	
 	COMPONENT MEM_WB_Buffer IS
-	PORT( 		 
-		Clk,Rst,en : IN std_logic;
+		PORT( 		 
+			Clk,Rst,en :	IN std_logic;
 		
-		--BEGIN INPUT_BUFFER
+			--BEGIN INPUT_BUFFER
 		  
-		--WB CONTROL REGISTER INPUT
+			--WB CONTROL REGISTER INPUT
 			D_WB : 		IN std_logic_vector(4 downto 0);
-		--END WB CONTROL REGISTER INPUT
+			--END WB CONTROL REGISTER INPUT
 
-		--Memory Data REGISTER INPUT 
-			D_MemR: 		IN std_logic_vector (31 DOWNTO 0);
+			--Memory Data REGISTER INPUT 
+			D_MemR: 	IN std_logic_vector (31 DOWNTO 0);
 			D_ALUResult:	IN std_logic_vector(31 DOWNTO 0);
-			D_RD2:			IN std_logic_vector(31 DOWNTO 0);
-			D_WR1:			IN std_logic_vector(2 DOWNTO 0);
-			D_WR2:			IN std_logic_vector(2 DOWNTO 0);
-		--END Memory Data REGISTER INPUT 
+			D_RD2:		IN std_logic_vector(31 DOWNTO 0);
+			D_WR1:		IN std_logic_vector(2 DOWNTO 0);
+			D_WR2:		IN std_logic_vector(2 DOWNTO 0);
+			--END Memory Data REGISTER INPUT 
 
-		--END INPUT BUFFER
+			--END INPUT BUFFER
 
-		--BEGIN OUTPUT_BUFFER
+			--BEGIN OUTPUT_BUFFER
 		
-		--WB CONTROL REGISTER OUTPUT
-			Q_WB :  OUT std_logic_vector(4 downto 0);
-		--END WB CONTROL REGISTER OUTPUT
+			--WB CONTROL REGISTER OUTPUT
+			Q_WB :  	OUT std_logic_vector(4 downto 0);
+			--END WB CONTROL REGISTER OUTPUT
 
-		--Memory Data REGISTER OUTPUT 
-			Q_MemR: 		OUT std_logic_vector (31 DOWNTO 0);
+			--Memory Data REGISTER OUTPUT 
+			Q_MemR: 	OUT std_logic_vector (31 DOWNTO 0);
 			Q_ALUResult:	OUT std_logic_vector(31 DOWNTO 0);
-			Q_RD2:			OUT std_logic_vector(31 DOWNTO 0);
-			Q_WR1:			OUT std_logic_vector(2 DOWNTO 0);
-			Q_WR2:			OUT std_logic_vector(2 DOWNTO 0)
-		--Memory Data REGISTER OUTPUT 
+			Q_RD2:		OUT std_logic_vector(31 DOWNTO 0);
+			Q_WR1:		OUT std_logic_vector(2 DOWNTO 0);
+			Q_WR2:		OUT std_logic_vector(2 DOWNTO 0)
+			--Memory Data REGISTER OUTPUT 
 		   
-		--END OUTPUT BUFFER
+			--END OUTPUT BUFFER
 		
-	);
+		);
 	END COMPONENT;
 	
 	COMPONENT MUX_2x1 IS
-	generic(
-		n : integer
-	);	
-	PORT( 
-		in0:  IN  std_logic_vector (n-1 DOWNTO 0);
-		in1:  IN  std_logic_vector (n-1 DOWNTO 0);
-		sel:  IN  std_logic;
-		outm: OUT std_logic_vector (n-1 DOWNTO 0)
-	);
-  END COMPONENT;
+		generic(
+			n : integer
+		);
+		
+		PORT( 
+			in0:  IN  std_logic_vector (n-1 DOWNTO 0);
+			in1:  IN  std_logic_vector (n-1 DOWNTO 0);
+			sel:  IN  std_logic;
+			outm: OUT std_logic_vector (n-1 DOWNTO 0)
+		);
+	END COMPONENT;
 --=================================================================================================================================================
 	--FETCH STAGE OUTPUTS
 
---ANOUD
-  signal IF_OUT_PC: std_logic_vector(31 downto 0);
-  signal IF_OUT_PCnext: std_logic_vector(31 downto 0); 
-  signal IF_OUT_instr: std_logic_vector(31 downto 0);
+	signal IF_OUT_PC: std_logic_vector(31 downto 0);
+	signal IF_OUT_PCnext: std_logic_vector(31 downto 0); 
+	signal IF_OUT_instr: std_logic_vector(31 downto 0);
 
 	--END FETCH STAGE OUTPUTS
 --=================================================================================================================================================
 	--OUTPUT OF FETCH/DECODE BUFFER
---ANOUD
+
 	signal IF_ID_OUT_instr : 	std_logic_vector(31 downto 0);
 	signal IF_ID_OUT_int : 		std_logic;
 	signal IF_ID_OUT_PC : 		std_logic_vector(31 downto 0);
@@ -403,9 +405,10 @@ Architecture Processor_Archi of Processor IS
 	--END EXECUTE STAGE OUTPUTS
 --=================================================================================================================================================
 	--OUTPUT OF  EXECUTE/MEMORY BUFFER
---AHMED
+
 	Signal EX_MEM_OUT_WB:     	std_logic_vector(4 downto 0);
 	Signal EX_MEM_OUT_MEM:     	std_logic_vector(10 downto 0);
+	Signal EX_MEM_OUT_CCR:		std_logic_vector(3 downto 0);
 	Signal EX_MEM_OUT_ALUResult:	std_logic_vector(31 downto 0);
 	Signal EX_MEM_OUT_PC:		std_logic_vector(31 downto 0);
 	Signal EX_MEM_OUT_PCnext:	std_logic_vector(31 downto 0);
@@ -426,8 +429,7 @@ Architecture Processor_Archi of Processor IS
 	--END MEMORY STAGE OUTPUTS
 --=================================================================================================================================================	
 	--OUTPUT OF  MEMORY/WB BUFFER
---AHMED
---ANOUD	
+
 	--MEM Data outputs
 	signal MEM_WB_OUT_MEMR:		std_logic_vector(31 downto 0);
 	signal MEM_WB_OUT_ALUr:		std_logic_vector(31 downto 0);
@@ -437,29 +439,39 @@ Architecture Processor_Archi of Processor IS
 	--WB Control Register Output
 	signal MEM_WB_OUT_WB  :		std_logic_vector(4 downto 0);
 
+	--ALIASES AS SIGNALS
+	signal MEM_WB_OUT_WE1R:		std_logic;
+	signal MEM_WB_OUT_WE2R: 	std_logic;
+	signal MEM_WB_OUT_WDRS:		std_logic;
+
 	--END MEMORY/WB BUFFER
 --=================================================================================================================================================
 	--WRITE BACK STAGE OUTPUTS
---ANOUD
+
 	signal WB_OUT_WB : 		std_logic_vector(31 downto 0);
 
 	--END WRITE BACK STAGE OUTPUTS
 --=================================================================================================================================================
 BEGIN
+	--ALIASES AS SIGNALS
+	MEM_WB_OUT_WE1R <= MEM_WB_OUT_WB(1);
+	MEM_WB_OUT_WE1R <= MEM_WB_OUT_WB(0);
+	MEM_WB_OUT_WDRS <= MEM_WB_OUT_WB(2);
+	
 	--FETCH STAGE
 
- Fetch_Stage : IF_Stage
-   port map(
+ 	Fetch_Stage : IF_Stage
+   		port map(
      
- 		clk 		=>	CLK,
-		PCbranch => ID_OUT_PCBranch,
-		BranchS => ID_OUT_PCBranchS,
-		WB => WB_OUT_WB,
-		PCS => MEM_WB_OUT_WB(3),
-		NOP => '0',   --TODO to be replaced with hazard hazard detection unit output
-		CurrentPC => IF_OUT_PC,
-		PCnext => IF_OUT_PCnext,
-		Instruction => IF_OUT_instr
+ 			clk 		=>	CLK,
+			PCbranch 	=> 	ID_OUT_PCBranch,
+			BranchS 	=> 	ID_OUT_PCBranchS,
+			WB 		=> 	WB_OUT_WB,
+			PCS 		=> 	MEM_WB_OUT_WB(3),
+			NOP 		=> 	'0',   		--TODO to be replaced with hazard hazard detection unit output
+			CurrentPC 	=> 	IF_OUT_PC,
+			PCnext 		=> 	IF_OUT_PCnext,
+			Instruction 	=> 	IF_OUT_instr
 		
 		);		   
 
@@ -467,7 +479,6 @@ BEGIN
 --=================================================================================================================================================
 	--FETCH/DECODE BUFFER
 	
---ANOUD
   	IF_ID_BUFF : If_ID_Buffer
 		port map(
 		  
@@ -476,22 +487,22 @@ BEGIN
 			en		=>	'1',
 			
 			--INPUTS
-			d_PC => IF_OUT_PC,
-			d_PCnext => IF_OUT_PCnext,
-			d_Instruction => IF_OUT_instr,
-			d_INPORT => IN_PORT,
-			NOP => '0',       --TODO to be replaced with hazard hazard detection unit output
-			IF_FLUSH => '0',  --TODO to be replaced with hazard hazard detection unit output
-			d_INT => INTR_IN,
+			d_PC 		=> 	IF_OUT_PC,
+			d_PCnext 	=> 	IF_OUT_PCnext,
+			d_Instruction 	=> 	IF_OUT_instr,
+			d_INPORT 	=> 	IN_PORT,
+			NOP 		=> 	'0',       	--TODO to be replaced with hazard hazard detection unit output
+			IF_FLUSH	=>	'0',  		--TODO to be replaced with hazard hazard detection unit output
+			d_INT 		=> 	INTR_IN,
 			
 			--OUTPUTS
-			q_PC => IF_ID_OUT_PC,
-			q_PCnext => IF_ID_OUT_PCnext,
-			q_Instruction => IF_ID_OUT_instr,
-			q_INPORT => IF_ID_OUT_INport,
-			q_INT => IF_ID_OUT_int
+			q_PC 		=> 	IF_ID_OUT_PC,
+			q_PCnext	=> 	IF_ID_OUT_PCnext,
+			q_Instruction 	=> 	IF_ID_OUT_instr,
+			q_INPORT	=> 	IF_ID_OUT_INport,
+			q_INT 		=> 	IF_ID_OUT_int
 			
-			);
+		);
 			
 
 	--END FETCH/DECODE BUFFER
@@ -675,6 +686,7 @@ BEGIN
 			D_MEM		=> 	EX_OUT_MEM,
 			--END MEMORY CONTROL PROPAGATION
 			--Execute Data PROPAGATION
+			D_CCR 		=>	CCR,
 			D_ALUResult	=>	EX_ALUResult,
 			D_PC		=> 	ID_EX_OUT_PC,
 			D_PCnext 	=> 	ID_EX_OUT_PCnext,
@@ -699,6 +711,7 @@ BEGIN
 			Q_MEM 		=> 	EX_MEM_OUT_MEM,
 			--END MEMORY CONTROL PROPAGATION
 			--Execute Data PROPAGATION
+			Q_CCR		=>	EX_MEM_OUT_CCR,
 			Q_ALUResult	=>	EX_MEM_OUT_ALUResult,
 			Q_PC 		=> 	EX_MEM_OUT_PC,
 			Q_PCnext 	=> 	EX_MEM_OUT_PCnext,
@@ -721,20 +734,20 @@ BEGIN
 	MEMORY_STAGE: MEMStage
 		port map(
 			--INPUTS	
-			clk		=> CLK,
+			clk		=>	CLK,
 			--From previous buffer
 			--Control Register
 			EX_MEM_MEM 	=> 	EX_MEM_OUT_MEM,
 			--Data To Store
-			CCR			=>	EX_MEM_OUT_CCR,
+			CCR		=>	EX_MEM_OUT_CCR,
 			PCnext		=>	EX_MEM_OUT_PCnext,
-			PC			=>	EX_MEM_OUT_PC,
+			PC		=>	EX_MEM_OUT_PC,
 			ALUResult 	=>	EX_MEM_OUT_ALUResult,
 			--Addresses
-			EAe			=> 	EX_MEM_OUT_EAe,
+			EAe		=> 	EX_MEM_OUT_EAe,
 			--OUTPUTS
 			--Data Loaded
-			RD			=>	MEM_OUT_MEMR
+			RD		=>	MEM_OUT_MEMR
 		);
 
 	--END MEMORY STAGE
@@ -743,18 +756,18 @@ BEGIN
 	MEM_WB_BUFF: MEM_WB_Buffer
 		port map(
 			clk		=>	CLK,
-			rst	=>	Reset,
+			rst		=>	Reset,
 			en		=>	'1',
 		-- INPUTS
 			D_WB 		=>	EX_MEM_OUT_WB,
 			D_MemR 		=> 	MEM_OUT_MEMR,
-			D_ALUResult => 	EX_MEM_OUT_ALUResult,
+			D_ALUResult	=> 	EX_MEM_OUT_ALUResult,
 			D_RD2		=>	EX_MEM_OUT_RD2,
 			D_WR1		=>	EX_MEM_OUT_WR1,
 			D_WR2		=>	EX_MEM_OUT_WR2,
 		-- OUTPUTS	
 			Q_WB 		=> 	MEM_WB_OUT_WB,
-			Q_ALUResult => 	MEM_WB_OUT_ALUr,
+			Q_ALUResult 	=> 	MEM_WB_OUT_ALUr,
 			Q_RD2		=> 	MEM_WB_OUT_RD2,
 			Q_WR1		=> 	MEM_WB_OUT_WR1,
 			Q_WR2		=> 	MEM_WB_OUT_WR2
@@ -763,8 +776,8 @@ BEGIN
 --=================================================================================================================================================
 	--WRITE BACK STAGE
 
---ANOUD
-WB_Stage_MUX : MUX_2x1 generic map(32) port map(MEM_WB_OUT_ALUr,MEM_WB_OUT_MEMR,MEM_WB_OUT_WB(4),WB_OUT_WB);
+	WB_Stage_MUX : MUX_2x1 generic map(32) port map(MEM_WB_OUT_ALUr,MEM_WB_OUT_MEMR,MEM_WB_OUT_WB(4),WB_OUT_WB);
 
 	--END WRITE BACK STAGE 
+
 END Processor_Archi;
