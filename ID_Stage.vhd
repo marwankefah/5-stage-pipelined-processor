@@ -199,7 +199,7 @@ begin
 	-- REGISTER FILE
 	RR1_MUX : MUX_2x1 generic map(3) port map(instr_9to7,instr_6to4,c_RR1S,regfile_RR1);
 	WD1_MUX : MUX_2x1 generic map(32) port map(WB_WB,MEM_WB_RD2,MEM_WB_WDRS,regfile_WD1);
-	regfile : register_file port map(clk,reset,MEM_WB_WE1R,MEM_WB_WE2R,regfile_RR1,instr_3to1,instr_9to7,instr_3to1,regfile_WD1,WB_WB,regfile_RD1,RD2);
+	regfile : register_file port map(clk,reset,MEM_WB_WE1R,MEM_WB_WE2R,regfile_RR1,instr_3to1,MEM_WB_WR1,MEM_WB_WR2,regfile_WD1,WB_WB,regfile_RD1,RD2);
 	RD1_MUX : MUX_4x1 generic map(32) port map(regfile_RD1,INport,IMMe_sig,IMMe_sig,c_INPS,RD1);
 
 	-- OTHER SIGNALS
