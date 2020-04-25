@@ -206,7 +206,7 @@ begin
 	WR1 <= instr_9to7;
 	WR2 <= instr_3to1;
 	RR1 <= regfile_RR1;
-	RR1 <= instr_3to1;
+	RR2 <= instr_3to1;
 
 	-- BRANCHING SIGNALS
 	BranchRD1_MUX : MUX_4x1 generic map(32) port map(regfile_RD1,EX_MEM_ALUr,EX_MEM_RD2,EX_MEM_RD2,F_C,branch_RD1);

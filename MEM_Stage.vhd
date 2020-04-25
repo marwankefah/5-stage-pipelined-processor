@@ -40,7 +40,9 @@ ARCHITECTURE MEMstageArchi OF MEMstage IS
 
 	--Generic MUX
 	COMPONENT MUX_4x1 IS
-	
+	generic(
+		n : integer
+	);
 	PORT( 
 	        in0:  IN  std_logic_vector (31 DOWNTO 0);
 	        in1:  IN  std_logic_vector (31 DOWNTO 0);
@@ -86,7 +88,6 @@ ARCHITECTURE MEMstageArchi OF MEMstage IS
 	SIGNAL addrMUXout:	std_logic_vector(31 DOWNTO 0);
 	SIGNAL intMUXout:	std_logic_vector(31 DOWNTO 0);
 	--data selection
-	SIGNAL d_CCR: std_logic_vector(31 DOWNTO 0);
 	SIGNAL q_PC:		std_logic_vector(31 DOWNTO 0);
 	SIGNAL q_CCR:		std_logic_vector(31 DOWNTO 0);
 	SIGNAL dataMUXout:	std_logic_vector(31 DOWNTO 0); 
@@ -115,18 +116,17 @@ ARCHITECTURE MEMstageArchi OF MEMstage IS
 		INTCTRL	<= 	EX_MEM_MEM(7 DOWNTO 6);
 		--Multiplexers to detemrine data and address
 		u_SP:		SPunit 	PORT MAP(clk,SPS,SP2,a_SP,a_SPp2,a_SPm2);
-		addrMUX: 	MUX_4x1 PORT MAP(a_SP,a_SPm2,intMUXout,EAe,DAS,addrMUXout);
-		intMUX: 	MUX_4x1 PORT MAP(std_logic_vector(to_unsigned(0,32)),std_logic_vector(to_unsigned(2,32)),a_SPm2,a_SPm2,INTCTRL,intMUXout);
-		dataMUX:	MUX_4x1 PORT MAP(ALUResult,q_PC,PCnext,q_CCR,WDS,dataMUXout);
+		addrMUX: 	MUX_4x1 GENERIC MAP (32) PORT MAP(a_SP,a_SPm2,intMUXout,EAe,DAS,addrMUXout);
+		intMUX: 	MUX_4x1 GENERIC MAP (32) PORT MAP(std_logic_vector(to_unsigned(0,32)),std_logic_vector(to_unsigned(2,32)),a_SPm2,a_SPm2,INTCTRL,intMUXout);
+		dataMUX:	MUX_4x1 GENERIC MAP (32) PORT MAP(ALUResult,q_PC,PCnext,q_CCR,WDS,dataMUXout);
 		--Main Data Memory Module
 		datamem:	DataMemory PORT MAP(addrMUXout,dataMUXout,RD,MW,MR,clk);
 		
 		--Writing on CCR and PC registers
 		en <= '1';
 		rst <= '0';
-		d_CCR <= (std_logic_vector(to_unsigned(0,28)) & CCR);
+		q_CCR <= (std_logic_vector(to_unsigned(0,28)) & CCR);
 		PC_reg: 	reg GENERIC MAP (32) PORT MAP(clk,rst,en,PC,q_PC);
-		CCR_reg:	reg GENERIC MAP (32) PORT MAP(clk,rst,en,d_CCR,q_CCR);
 	
 END MEMstageArchi;
 	

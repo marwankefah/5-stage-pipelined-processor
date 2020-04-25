@@ -36,7 +36,9 @@ ARCHITECTURE SPunitArchi OF SPunit IS
   END COMPONENT;
   
   COMPONENT MUX_4x1 IS
-	
+	generic(
+		n : integer
+	);	
 	PORT( 
 	        in0:  IN  std_logic_vector (31 DOWNTO 0);
 	        in1:  IN  std_logic_vector (31 DOWNTO 0);
@@ -48,7 +50,9 @@ ARCHITECTURE SPunitArchi OF SPunit IS
   END COMPONENT;
   
   COMPONENT MUX_2x1 IS
-	
+	generic(
+		n : integer
+	);	
 	PORT( 
 	        in0:  IN  std_logic_vector (31 DOWNTO 0);
 	        in1:  IN  std_logic_vector (31 DOWNTO 0);
@@ -68,8 +72,8 @@ ARCHITECTURE SPunitArchi OF SPunit IS
   BEGIN
     
     SPaluUnit: SP_ALU  PORT MAP (q_SP,s_SP0,s_SPp2,s_SPm2,s_SPp4);
-    SPSmux:    MUX_4x1 PORT MAP (std_logic_vector(to_unsigned(2147483646,32)),s_SP0,s_SPp2,s_SPm2,SPS,outSPSm);
-    SP2mux:    MUX_2x1 PORT MAP (outSPSm,s_SPp4,SP2,outSP2m);
+    SPSmux:    MUX_4x1 GENERIC MAP (32)PORT MAP (std_logic_vector(to_unsigned(98,32)),s_SP0,s_SPp2,s_SPm2,SPS,outSPSm);
+    SP2mux:    MUX_2x1 GENERIC MAP (32)PORT MAP (outSPSm,s_SPp4,SP2,outSP2m);
     
     PROCESS(clk) IS
       BEGIN 
