@@ -761,7 +761,7 @@ BEGIN
 			D_WR2		=>	EX_MEM_OUT_WR2,
 		-- OUTPUTS	
 			Q_WB 		=> 	MEM_WB_OUT_WB,
-			Q_MR		=>	MEM_WB_OUT_MEMR,
+			Q_MemR		=>	MEM_WB_OUT_MEMR,
 			Q_ALUResult 	=> 	MEM_WB_OUT_ALUr,
 			Q_RD2		=> 	MEM_WB_OUT_RD2,
 			Q_WR1		=> 	MEM_WB_OUT_WR1,
