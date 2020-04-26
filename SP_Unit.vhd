@@ -72,7 +72,7 @@ ARCHITECTURE SPunitArchi OF SPunit IS
   BEGIN
     
     SPaluUnit: SP_ALU  PORT MAP (q_SP,s_SP0,s_SPp2,s_SPm2,s_SPp4);
-    SPSmux:    MUX_4x1 GENERIC MAP (32)PORT MAP (std_logic_vector(to_unsigned(100,32)),s_SP0,s_SPp2,s_SPm2,SPS,outSPSm);
+    SPSmux:    MUX_4x1 GENERIC MAP (32)PORT MAP (std_logic_vector(to_unsigned(98,32)),s_SP0,s_SPp2,s_SPm2,SPS,outSPSm);
     SP2mux:    MUX_2x1 GENERIC MAP (32)PORT MAP (outSPSm,s_SPp4,SP2,outSP2m);
     
     PROCESS(clk) IS
