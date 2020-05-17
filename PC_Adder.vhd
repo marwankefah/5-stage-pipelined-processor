@@ -15,7 +15,9 @@ END PCAdder;
 ARCHITECTURE PCAdderArchi OF PCAdder IS
   
   COMPONENT MUX_2x1 IS
-
+  generic(
+		n : integer
+	);	
 	PORT( 
 			in0:  IN  std_logic_vector (31 DOWNTO 0);
 			in1:  IN  std_logic_vector (31 DOWNTO 0);
@@ -28,7 +30,7 @@ ARCHITECTURE PCAdderArchi OF PCAdder IS
   SIGNAL a_MUXout: std_logic_vector (31 DOWNTO 0);
   
   BEGIN
-    a_MUX: MUX_2x1 PORT MAP(std_logic_vector(to_unsigned(1,32)),std_logic_vector(to_unsigned(2,32)),PCas,a_MUXout);
+    a_MUX: MUX_2x1 GENERIC MAP (32) PORT MAP(std_logic_vector(to_unsigned(1,32)),std_logic_vector(to_unsigned(2,32)),PCas,a_MUXout);
      
     PCnext <= std_logic_vector(unsigned(PC) + unsigned(a_MUXout));
     

@@ -23,16 +23,15 @@ PORT(
 
 
 			--Execute Data PROPAGATION
-				D_ALUResult:	IN stD_logic_vector(31 DOWNTO 0);
-				D_PC : 		IN std_logic_vector(31 downto 0);
- 				D_PCnext : 	IN std_logic_vector(31 downto 0);
-				D_RD1:		IN stD_logic_vector(31 DOWNTO 0);
-				D_RD2:		IN stD_logic_vector(31 DOWNTO 0);
-				D_EAe:		IN stD_logic_vector(31 DOWNTO 0);
-				D_WR1:		IN stD_logic_vector(2 DOWNTO 0);
-				D_WR2:		IN stD_logic_vector(2 DOWNTO 0);
-				D_RR1:		IN stD_logic_vector(2 DOWNTO 0);
-				D_RR2:		IN stD_logic_vector(2 DOWNTO 0);
+				D_CCR : 		IN std_logic_vector(3 downto 0);
+				D_ALUResult:		IN stD_logic_vector(31 DOWNTO 0);
+				D_PC : 			IN std_logic_vector(31 downto 0);
+ 				D_PCnext : 		IN std_logic_vector(31 downto 0);
+				D_RD1:			IN stD_logic_vector(31 DOWNTO 0);
+				D_RD2:			IN stD_logic_vector(31 DOWNTO 0);
+				D_EAe:			IN stD_logic_vector(31 DOWNTO 0);
+				D_WR1:			IN stD_logic_vector(2 DOWNTO 0);
+				D_WR2:			IN stD_logic_vector(2 DOWNTO 0);
 
 			--END Execute Data PROPAGATION
 			
@@ -57,6 +56,7 @@ PORT(
 
 
 			--Execute Data PROPAGATION
+			Q_CCR : 	OUT std_logic_vector(3 downto 0);
 			Q_ALUResult:	OUT stD_logic_vector(31 DOWNTO 0);
  			Q_PC:	 	OUT stD_logic_vector(31 DOWNTO 0);
 			Q_PCnext:	OUT stD_logic_vector(31 DOWNTO 0);
@@ -65,8 +65,6 @@ PORT(
 			Q_EAe:		OUT stD_logic_vector(31 DOWNTO 0);
 			Q_WR1:		OUT stD_logic_vector(2 DOWNTO 0);
 			Q_WR2:		OUT stD_logic_vector(2 DOWNTO 0);
-			Q_RR1:		OUT stD_logic_vector(2 DOWNTO 0);
-			Q_RR2:		OUT stD_logic_vector(2 DOWNTO 0);
 
 			--END Execute Data PROPAGATION
 			
@@ -121,6 +119,7 @@ BEGIN
 			--END MEMORY CONTROL PROPAGATION
 
 			--Execute Data PROPAGATION
+	EX_CCR_Reg:		Reg generic map(4) port map(Clk,Rst,en,D_CCR,Q_CCR);
 	EX_PC_Reg:		Reg generic map(32) port map(Clk,Rst,en,D_PC,Q_PC);
 	EX_PCnext_Reg:		Reg generic map(32) port map(Clk,Rst,en,D_PCnext,Q_PCnext);
 	EX_ALURes_Reg:		Reg generic map(32) port map(Clk,Rst,en,D_ALUResult,Q_ALUResult);
@@ -128,9 +127,7 @@ BEGIN
 	EX_RD2_Reg:		Reg generic map(32) port map(Clk,Rst,en,D_RD2,Q_RD2);	
 	EX_EAe_Reg:		Reg generic map(32) port map(Clk,Rst,en,D_EAe,Q_EAe); 
 	EX_WR1_Reg:		Reg generic map(3) port map(Clk,Rst,en,D_WR1,Q_WR1); 
-	EX_WR2_Reg:		Reg generic map(3) port map(Clk,Rst,en,D_WR2,Q_WR2); 
-	EX_RR1_Reg:		Reg generic map(3) port map(Clk,Rst,en,D_RR1,Q_RR1); 
-	EX_RR2_Reg:		Reg generic map(3) port map(Clk,Rst,en,D_RR2,Q_RR2); 
+	EX_WR2_Reg:		Reg generic map(3) port map(Clk,Rst,en,D_WR2,Q_WR2);
 
 			--END Execute Data PROPAGATION
 			

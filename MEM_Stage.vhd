@@ -9,18 +9,12 @@ ENTITY MEMstage IS
 
 PORT (	
         clk:        IN  std_logic;
-		--Control Signals
-		MR:			IN  std_logic;
-		MW:			IN  std_logic;
-		--Selector Control Lines
-        SPS:        IN  std_logic_vector(1 DOWNTO 0);
-        SP2:        IN  std_logic;
-		WDS:		IN  std_logic_vector(1 DOWNTO 0);
-		DAS:		IN  std_logic_vector(1 DOWNTO 0);
-		INTCTRL:	IN  std_logic_vector(1 DOWNTO 0);
+		--Memory Control Register from previous buffer
+		EX_MEM_MEM:	IN 	std_logic_vector(10 DOWNTO 0);
 		--Data To Store
 		CCR:		IN 	std_logic_vector(3 DOWNTO 0);
 		PCnext:		IN 	std_logic_vector(31 DOWNTO 0);
+		PC:			IN 	std_logic_vector(31 DOWNTO 0);
 		ALUResult: 	IN	std_logic_vector(31 DOWNTO 0);
 		--Addresses
 		EAe:		IN	std_logic_vector(31 DOWNTO 0);
@@ -46,7 +40,9 @@ ARCHITECTURE MEMstageArchi OF MEMstage IS
 
 	--Generic MUX
 	COMPONENT MUX_4x1 IS
-	
+	generic(
+		n : integer
+	);
 	PORT( 
 	        in0:  IN  std_logic_vector (31 DOWNTO 0);
 	        in1:  IN  std_logic_vector (31 DOWNTO 0);
@@ -70,6 +66,21 @@ ARCHITECTURE MEMstageArchi OF MEMstage IS
 		);
 	END COMPONENT;
 	
+	--1 bit register unit
+	COMPONENT reg is 
+	generic(
+		n : integer
+	);
+
+	port(
+		   clk : in std_logic;
+		   reset : in std_logic;
+		   en : in std_logic;
+		   d : in std_logic_vector(n-1 downto 0);
+		   q : out std_logic_vector(n-1 downto 0)
+	);
+	end COMPONENT;
+
 	--address selection
 	SIGNAL a_SP	:		std_logic_vector(31 DOWNTO 0);
 	SIGNAL a_SPp2:		std_logic_vector(31 DOWNTO 0);
@@ -80,25 +91,42 @@ ARCHITECTURE MEMstageArchi OF MEMstage IS
 	SIGNAL q_PC:		std_logic_vector(31 DOWNTO 0);
 	SIGNAL q_CCR:		std_logic_vector(31 DOWNTO 0);
 	SIGNAL dataMUXout:	std_logic_vector(31 DOWNTO 0); 
+	--reg signals
+	SIGNAL en: 			std_logic;
+	SIGNAL rst: 		std_logic;
+	--Control Signals
+	SIGNAL MR:			std_logic;
+	SIGNAL MW:			std_logic;
+	--Selector Control Lines
+    SIGNAL SPS:         std_logic_vector(1 DOWNTO 0);
+    SIGNAL SP2:         std_logic;
+	SIGNAL WDS:		    std_logic_vector(1 DOWNTO 0);
+	SIGNAL DAS:			std_logic_vector(1 DOWNTO 0);
+	SIGNAL INTCTRL:		std_logic_vector(1 DOWNTO 0);
 	
 	BEGIN
-		
+		--Control Signals
+		MR		<= 	EX_MEM_MEM(1);
+		MW  	<= 	EX_MEM_MEM(0);
+	--Selector Control Lines
+		SPS		<= 	EX_MEM_MEM(10 DOWNTO 9);
+		SP2		<= 	EX_MEM_MEM(8);
+		WDS		<= 	EX_MEM_MEM(5 DOWNTO 4);
+		DAS		<= 	EX_MEM_MEM(3 DOWNTO 2);
+		INTCTRL	<= 	EX_MEM_MEM(7 DOWNTO 6);
 		--Multiplexers to detemrine data and address
 		u_SP:		SPunit 	PORT MAP(clk,SPS,SP2,a_SP,a_SPp2,a_SPm2);
-		addrMUX: 	MUX_4x1 PORT MAP(a_SP,a_SPm2,intMUXout,EAe,DAS,addrMUXout);
-		intMUX: 	MUX_4x1 PORT MAP(std_logic_vector(to_unsigned(0,32)),std_logic_vector(to_unsigned(2,32)),a_SPm2,a_SPm2,INTCTRL,intMUXout);
-		dataMUX:	MUX_4x1 PORT MAP(ALUResult,q_PC,PCnext,q_CCR,WDS,dataMUXout);
+		addrMUX: 	MUX_4x1 GENERIC MAP (32) PORT MAP(a_SP,a_SPm2,intMUXout,EAe,DAS,addrMUXout);
+		intMUX: 	MUX_4x1 GENERIC MAP (32) PORT MAP(std_logic_vector(to_unsigned(0,32)),std_logic_vector(to_unsigned(2,32)),a_SPm2,a_SPm2,INTCTRL,intMUXout);
+		dataMUX:	MUX_4x1 GENERIC MAP (32) PORT MAP(ALUResult,q_PC,PCnext,q_CCR,WDS,dataMUXout);
 		--Main Data Memory Module
 		datamem:	DataMemory PORT MAP(addrMUXout,dataMUXout,RD,MW,MR,clk);
 		
 		--Writing on CCR and PC registers
-		PROCESS (clk) IS
-			BEGIN
-				IF falling_edge(clk) THEN
-					q_PC <=PCnext;
-					q_CCR <= std_logic_vector(to_unsigned(0,28)) & CCR;
-				END IF;
-		END PROCESS;
+		en <= '1';
+		rst <= '0';
+		q_CCR <= (std_logic_vector(to_unsigned(0,28)) & CCR);
+		PC_reg: 	reg GENERIC MAP (32) PORT MAP(clk,rst,en,PC,q_PC);
 	
 END MEMstageArchi;
 	

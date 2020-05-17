@@ -11,6 +11,7 @@ PORT (
        PCS:        IN std_logic;
        NOP:        IN std_logic;
        clk:        IN std_logic;
+       CurrentPC:  OUT std_logic_vector(31 downto 0);
        PCnext:     OUT std_logic_vector(31 downto 0);
        Instruction:OUT std_logic_vector(31 downto 0) 
               
@@ -20,7 +21,9 @@ END  IF_Stage;
 ARCHITECTURE IF_Archi OF IF_Stage IS
 
   COMPONENT MUX_2x1 IS
-
+  generic(
+		n : integer
+	 );	
 	PORT( 
 			in0:  IN  std_logic_vector (31 DOWNTO 0);
 			in1:  IN  std_logic_vector (31 DOWNTO 0);
@@ -70,15 +73,16 @@ SIGNAL ImemOut:   std_logic_vector(31 DOWNTO 0);
 
   
 BEGIN 
-  b_MUX:  MUX_2x1 PORT MAP(PCbranch,a_PCnext,BranchS,b_MUXout);
-  pc_MUX: MUX_2x1 PORT MAP(b_MUXout,WB,PCS,pc_MUXout);
+  b_MUX:  MUX_2x1 GENERIC MAP (32) PORT MAP(PCbranch,a_PCnext,BranchS,b_MUXout);
+  pc_MUX: MUX_2x1 GENERIC MAP (32) PORT MAP(b_MUXout,WB,PCS,pc_MUXout);
     
   pcReg: PC PORT MAP(clk,pc_MUXout,pcRegOut,NOP);
     
   I_mem: InstructionMemory PORT MAP(pcRegOut,ImemOut,clk);
   
   pc_Add: PCAdder PORT MAP(pcRegOut,InstSel,a_PCnext);
-   
+  
+  CurrentPC <=  pcRegOut;
   InstSel <= ImemOut(15);  
   PCnext  <= a_PCnext;
   Instruction <= ImemOut;

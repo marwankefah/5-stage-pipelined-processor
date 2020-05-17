@@ -12,13 +12,16 @@ END PC;
 
 ARCHITECTURE PCArchi OF PC IS  
 
-COMPONENT reg32 is 
+COMPONENT reg is 
+  	GENERIC(
+			n : integer
+		);
 	port(
 		   clk : in std_logic;
 		   reset : in std_logic;
 		   en : in std_logic;
-		   d : in std_logic_vector(31 downto 0);
-		   q : out std_logic_vector(31 downto 0)
+		   d : in std_logic_vector(n-1 downto 0);
+		   q : out std_logic_vector(n-1 downto 0)
 	    );
 end COMPONENT;
 
@@ -27,7 +30,7 @@ end COMPONENT;
 
 BEGIN
   
-PCreg : reg32 PORT MAP(clk,RST,PCen,PC_IN,PC_OUT);
+PCreg : reg generic map(32) PORT MAP(clk,RST,PCen,PC_IN,PC_OUT);
 
 RST  <= '0';
 PCen <= not NOP;  

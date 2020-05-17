@@ -18,11 +18,13 @@ entity ID_Stage is
 		-- FROM MEM/WB BUFFER
 		MEM_WB_WR1 : in std_logic_vector(2 downto 0);			
 		MEM_WB_WR2 : in std_logic_vector(2 downto 0);	
-		MEM_WB_RD2 : in std_logic_vector(31 downto 0);	
-		MEM_WB_WB : in std_logic_vector(31 downto 0);
+		MEM_WB_RD2 : in std_logic_vector(31 downto 0);		
 		MEM_WB_WE1R : in std_logic;
 		MEM_WB_WE2R : in std_logic;	
 		MEM_WB_WDRS : in std_logic;
+
+		--FROM WB STAGE
+		WB_WB : in std_logic_vector(31 downto 0);
 
 		-- FROM EX/MEM BUFFER
 		EX_MEM_RD2 : in std_logic_vector(31 downto 0);
@@ -196,15 +198,15 @@ begin
 
 	-- REGISTER FILE
 	RR1_MUX : MUX_2x1 generic map(3) port map(instr_9to7,instr_6to4,c_RR1S,regfile_RR1);
-	WD1_MUX : MUX_2x1 generic map(32) port map(MEM_WB_WB,MEM_WB_RD2,MEM_WB_WDRS,regfile_WD1);
-	regfile : register_file port map(clk,reset,MEM_WB_WE1R,MEM_WB_WE2R,regfile_RR1,instr_3to1,instr_9to7,instr_3to1,regfile_WD1,MEM_WB_WB,regfile_RD1,RD2);
+	WD1_MUX : MUX_2x1 generic map(32) port map(WB_WB,MEM_WB_RD2,MEM_WB_WDRS,regfile_WD1);
+	regfile : register_file port map(clk,reset,MEM_WB_WE1R,MEM_WB_WE2R,regfile_RR1,instr_3to1,MEM_WB_WR1,MEM_WB_WR2,regfile_WD1,WB_WB,regfile_RD1,RD2);
 	RD1_MUX : MUX_4x1 generic map(32) port map(regfile_RD1,INport,IMMe_sig,IMMe_sig,c_INPS,RD1);
 
 	-- OTHER SIGNALS
 	WR1 <= instr_9to7;
 	WR2 <= instr_3to1;
 	RR1 <= regfile_RR1;
-	RR1 <= instr_3to1;
+	RR2 <= instr_3to1;
 
 	-- BRANCHING SIGNALS
 	BranchRD1_MUX : MUX_4x1 generic map(32) port map(regfile_RD1,EX_MEM_ALUr,EX_MEM_RD2,EX_MEM_RD2,F_C,branch_RD1);
