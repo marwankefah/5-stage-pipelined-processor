@@ -635,8 +635,8 @@ BEGIN
 			RD1		=> 	ID_EX_OUT_RD1,
 			RD2 		=>  	ID_EX_OUT_RD2,
 			RD2N		=>  	ID_EX_OUT_RD2,	-- TODO to be replaced with Forwarding out
-			WB		=>    	ID_EX_OUT_RD2,	-- TODO to be replaced with Forwarding out
-			ALUr		=>  	ID_EX_OUT_RD2, 	-- TODO to be replaced with Forwarding out
+			WB		=>    	WB_OUT_WB,	-- TODO to be replaced with writeback output
+			ALUr		=>  	EX_MEM_OUT_ALUResult, 	-- TODO to be replaced with ALur output from design
 			A		=>      "00",   	-- TODO to be replaced with Forwarding out
 			B		=>      "00",	  	-- TODO to be replaced with forwarding out
 			IMMe		=> 	ID_EX_OUT_IMMe,
