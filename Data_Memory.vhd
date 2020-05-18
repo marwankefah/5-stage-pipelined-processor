@@ -38,8 +38,7 @@ ARCHITECTURE DataMemArchi OF DataMemory IS
 		dataout2: OUT std_logic_vector(DataWidth-1 DOWNTO 0)
 		);
   END COMPONENT;
-  
-  SIGNAL R_we:    std_logic;
+
   SIGNAL R_Din1:  std_logic_vector(15 DOWNTO 0);
   SIGNAL R_Din2:  std_logic_vector(15 DOWNTO 0);
   SIGNAL R_Dout1: std_logic_vector(15 DOWNTO 0);
