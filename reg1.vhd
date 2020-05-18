@@ -13,7 +13,7 @@ end reg1;
 
 architecture reg1_arch of reg1 is
 begin
-	process(clk, reset)
+	process(clk)
 	begin
 		if (reset = '1') then 
 			q <= '0';
