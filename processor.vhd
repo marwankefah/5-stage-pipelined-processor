@@ -190,7 +190,8 @@ Architecture Processor_Archi of Processor IS
 			RD1: 		IN std_logic_vector(31 DOWNTO 0);
  			RD2 : 		IN std_logic_vector(31 DOWNTO 0);
 			--RD2 comming from memory stage
-			RD2N: 		IN std_logic_vector(31 DOWNTO 0);
+			RD12N: 		IN std_logic_vector(31 DOWNTO 0);
+			RD22N: 		IN std_logic_vector(31 DOWNTO 0);
 			WB:   		IN std_logic_vector(31 DOWNTO 0);
 			ALUr: 		IN std_logic_vector(31 DOWNTO 0);
 			A:    		IN std_logic_vector(1  DOWNTO 0);
@@ -317,6 +318,37 @@ Architecture Processor_Archi of Processor IS
 		);
 	END COMPONENT;
 	
+	COMPONENT Forwarding_Unit IS
+		PORT (	en:		IN std_logic;
+			ID_EX_RR1 :	IN std_logic_vector (2 DOWNTO 0);
+			ID_EX_RR2 : 	IN std_logic_vector (2 DOWNTO 0) ;
+			
+			IF_ID_RR1 : 	IN std_logic_vector (2 DOWNTO 0);
+			
+			ID_EX_INPS: 	IN std_logic_vector (1 DOWNTO 0);
+			
+			EX_MEM_WR1 : 	IN std_logic_vector (2 DOWNTO 0);
+			EX_MEM_WR2 : 	IN std_logic_vector (2 DOWNTO 0);
+			
+			MEM_WB_WR1 : 	IN std_logic_vector (2 DOWNTO 0);
+			MEM_WB_WR2 : 	IN std_logic_vector (2 DOWNTO 0);
+			
+			EX_MEM_WE1R:	IN std_logic;	
+			EX_MEM_WE2R:	IN std_logic;
+			
+			MEM_WB_WE1R:	IN std_logic;	
+			MEM_WB_WE2R:	IN std_logic;
+			
+			
+			EX_MEM_RD2:	IN std_logic_vector (31 DOWNTO 0);
+			MEM_WB_RD2:	IN std_logic_vector (31 DOWNTO 0);
+
+			RD2N1: 		OUT std_logic_vector(31 DOWNTO 0);
+			RD2N2: 		OUT std_logic_vector(31 DOWNTO 0);
+			A,B,C : 	OUT std_logic_vector(1  DOWNTO 0));   
+		
+		END COMPONENT;
+		
 	COMPONENT MUX_2x1 IS
 		generic(
 			n : integer
@@ -399,6 +431,12 @@ Architecture Processor_Archi of Processor IS
 	signal EX_ALUResult: 	std_logic_vector(31 downto 0);
 
 	--END EXECUTE STAGE OUTPUTS
+--=================================================================================================================================================
+
+	signal FU_RD1_OUT:	std_logic_vector(31 downto 0);
+	signal FU_RD2_OUT:	std_logic_vector(31 downto 0);
+	signal FU_A,FU_B,FU_C:	std_logic_vector(1  downto 0);
+	--END FORWARDING UNIT OUTPUTS
 --=================================================================================================================================================
 	--OUTPUT OF  EXECUTE/MEMORY BUFFER
 
@@ -535,7 +573,7 @@ BEGIN
 			EX_MEM_ALUr 	=>	EX_MEM_OUT_ALUResult,
 	
 			-- FROM FORWARDING UNIT
-			F_C 		=>	"00",		--TODO to be replaced with forwarding unit output
+			F_C 		=>	FU_C,		--TODO to be replaced with forwarding unit output
 			
 			-- FROM EX STAGE
 			CCR		=>	CCR, 
@@ -634,11 +672,12 @@ BEGIN
 			EX_INTS		=>	"01",		--TODO TO BE REPLACED WITH INT_HANDLING_UNIT OUTPUT
 			RD1		=> 	ID_EX_OUT_RD1,
 			RD2 		=>  	ID_EX_OUT_RD2,
-			RD2N		=>  	ID_EX_OUT_RD2,	-- TODO to be replaced with Forwarding out
+			RD12N		=>  	FU_RD1_OUT,	-- TODO to be replaced with Forwarding out
+			RD22N		=>  	FU_RD2_OUT,	-- TODO to be replaced with Forwarding out
 			WB		=>    	WB_OUT_WB,	-- TODO to be replaced with writeback output
 			ALUr		=>  	EX_MEM_OUT_ALUResult, 	-- TODO to be replaced with ALur output from design
-			A		=>      "00",   	-- TODO to be replaced with Forwarding out
-			B		=>      "00",	  	-- TODO to be replaced with forwarding out
+			A		=>      FU_A,   	-- TODO to be replaced with Forwarding out
+			B		=>      FU_B,	  	-- TODO to be replaced with forwarding out
 			IMMe		=> 	ID_EX_OUT_IMMe,
 			--Control input begin
 			ID_EX_EX	=>	ID_EX_OUT_EX,
@@ -666,6 +705,42 @@ BEGIN
 		);
 
 	--END OUTPUT PORT REGISTER
+--=================================================================================================================================================
+	--Forwarding UNIT
+
+	FU_UNIT : Forwarding_Unit
+		port map(	en=>	'0',  	--TODO ENABLE ="1" to check forwarding unit	  
+				ID_EX_RR1 =>	ID_EX_OUT_RR1,   
+ 				ID_EX_RR2 => 	ID_EX_OUT_RR2,   
+	
+				IF_ID_RR1 => 	ID_OUT_RR1,	--TODO CHECK IF THIS RR1 TO compare (DANIEL)   
+	
+				ID_EX_INPS=>    ID_EX_OUT_INPS,
+	
+				EX_MEM_WR1 => 	EX_MEM_OUT_WR1,  
+				EX_MEM_WR2 => 	EX_MEM_OUT_WR2,   
+	
+				MEM_WB_WR1 => 	MEM_WB_OUT_WR1,  
+				MEM_WB_WR2 => 	MEM_WB_OUT_WR2,   
+	
+				EX_MEM_WE1R=>	EX_MEM_OUT_WB(1),	
+				EX_MEM_WE2R=>	EX_MEM_OUT_WB(0),  
+	
+				MEM_WB_WE1R=>	MEM_WB_OUT_WB(1),  	
+				MEM_WB_WE2R=>	MEM_WB_OUT_WB(0),  
+	
+	
+				EX_MEM_RD2=>	EX_MEM_OUT_RD2,
+				MEM_WB_RD2=>	MEM_WB_OUT_RD2,  
+
+				RD2N1=> 	FU_RD1_OUT,	  
+				RD2N2=> 	FU_RD2_OUT,	  
+				A=> 		FU_A,
+				B=>		FU_B,
+				C=>   		FU_C
+						);
+
+	--END FORWARDING UNIT
 --=================================================================================================================================================
 	--EXECUTE/MEM  BUFFER
 
