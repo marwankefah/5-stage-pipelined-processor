@@ -7,6 +7,7 @@ entity ID_Stage is
 
 		-- EXTERNAL INPUT
 		clk : std_logic;
+		rst_in : std_logic;
 		reset : std_logic; 
 
 		-- FROM IF/ID BUFFER
@@ -178,7 +179,7 @@ begin
 	c_next_signals <= cntrl_signals(26 downto 0);
 
 	-- CONTROL UNIT
-	ControlUnit : control_unit port map(instr_opcode,int,reset,cntrl_signals);
+	ControlUnit : control_unit port map(instr_opcode,int,rst_in,cntrl_signals);
 
 	-- CONTROL SIGNALS
 	control_mux1 : MUX_2x1 generic map(27) port map(c_next_signals,ZERO,HZ_NOP,next_signals_stall);
@@ -210,7 +211,7 @@ begin
 
 	-- BRANCHING SIGNALS
 	BranchRD1_MUX : MUX_4x1 generic map(32) port map(regfile_RD1,EX_MEM_ALUr,EX_MEM_RD2,EX_MEM_RD2,F_C,branch_RD1);
-	FlagSelector_MUX : MUX_4x1_1 port map(CCR(0),CCR(1),CCR(2),CCR(3),c_JCS,select_with_flag);
+	FlagSelector_MUX : MUX_4x1_1 port map(CCR(3),CCR(2),CCR(1),CCR(0),c_JCS,select_with_flag);
 	Branch_MUX1 : MUX_2x1 generic map(32) port map(PCnext,branch_RD1,select_with_flag,jump_PC); 
 	Branch_MUX2 : MUX_2x1 generic map(32) port map(jump_PC,branch_RD1,c_CALL,PCBranch);
 	PCBranchS <= (c_CALL or select_with_flag);	
