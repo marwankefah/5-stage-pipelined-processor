@@ -6,7 +6,7 @@ ENTITY Processor IS
 	PORT (
 		--EXTERNAL INPUT
 		CLK:		IN std_logic;
-		RST_IN:	 	IN std_logic; 
+		Reset:	 	IN std_logic; 
 		INTR_IN:	IN std_logic;
 		IN_PORT:	IN std_logic_vector(31 DOWNTO 0);
 
@@ -449,7 +449,6 @@ Architecture Processor_Archi of Processor IS
 	--END WRITE BACK STAGE OUTPUTS
 --=================================================================================================================================================
   --Global Reset for Buffers and Registers
-  signal Reset : std_logic;
   
 BEGIN
 	--ALIASES AS SIGNALS
@@ -513,7 +512,7 @@ BEGIN
 
 			-- EXTERNAL INPUT
 			clk 		=>	CLK,
-			rst_in => RST_IN,
+			rst_in => Reset,
 			reset		=>	Reset,
 	
 			-- FROM IF/ID BUFFER
@@ -585,7 +584,7 @@ BEGIN
 	ID_EX_BUFF : ID_EX_Buffer
 		port map(
 			clk		=>	CLK,
-			reset		=>	Reset,
+			reset		=>	'0',
 			en		=>	'1',
 		
 			-- INPUTS 
