@@ -213,7 +213,7 @@ begin
 	FlagSelector_MUX : MUX_4x1_1 port map(CCR(0),CCR(1),CCR(2),CCR(3),c_JCS,select_with_flag);
 	Branch_MUX1 : MUX_2x1 generic map(32) port map(PCnext,branch_RD1,select_with_flag,jump_PC); 
 	Branch_MUX2 : MUX_2x1 generic map(32) port map(jump_PC,branch_RD1,c_CALL,PCBranch);
-	PCBranchS <= (c_CALL or select_with_flag);	
+	PCBranchS <= c_CALL or select_with_flag;	
 
 end ID_Stage_arch;
 
