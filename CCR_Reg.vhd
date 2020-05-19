@@ -18,13 +18,22 @@ architecture ccr_reg_arch of CCR_Reg is
 
 signal register_sig: std_logic_vector(3 downto 0);
 begin
-	process(clk)
+	process(clk, reset,enF,register_sig)
 	begin
 		if (reset = '1') then 
 			Q_CCR <= (others=>'0');
 		elsif rising_edge(clk) then
 			if(enF='1') then
-			Q_CCR<=register_sig;
+				if(clF='1') then
+					Q_CCR <= (others=>'0');
+				elsif(stC='1') then
+					Q_CCR(2)<='1';
+				elsif(clC='1')  then
+					Q_CCR(2)<='0';
+				else 
+					Q_CCR<=D_CCR;
+				end if;
+					
 			end if;
 		
 		end if;
