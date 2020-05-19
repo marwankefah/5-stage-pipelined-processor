@@ -6,7 +6,7 @@ ENTITY Processor IS
 	PORT (
 		--EXTERNAL INPUT
 		CLK:		IN std_logic;
-		Reset :	 	IN std_logic; 
+		RST_IN:	 	IN std_logic; 
 		INTR_IN:	IN std_logic;
 		IN_PORT:	IN std_logic_vector(31 DOWNTO 0);
 
@@ -35,12 +35,13 @@ Architecture Processor_Archi of Processor IS
 			PCbranch:   IN std_logic_vector(31 downto 0);
 			BranchS:    IN std_logic;
 			WB:         IN std_logic_vector(31 downto 0);
+			PCreset:    IN std_logic;
 			PCS:        IN std_logic;
-			NOP:        IN std_logic;
+			PCen:       IN std_logic;
 			clk:        IN std_logic;
 			CurrentPC:  OUT std_logic_vector(31 downto 0);
 			PCnext:     OUT std_logic_vector(31 downto 0);
-       			Instruction:OUT std_logic_vector(31 downto 0) 
+   			Instruction:OUT std_logic_vector(31 downto 0) 
               
 		);
 	END COMPONENT;
@@ -54,8 +55,6 @@ Architecture Processor_Archi of Processor IS
 			d_PCnext:      IN std_logic_vector(31 DOWNTO 0);
 			d_Instruction: IN std_logic_vector(31 DOWNTO 0);
 			d_INPORT:      IN std_logic_vector(31 DOWNTO 0);
-			NOP:           IN std_logic;
-			IF_FLUSH:      IN std_logic;
 			d_INT:         IN std_logic;
        
 			-- OUTPUTS
@@ -74,6 +73,7 @@ Architecture Processor_Archi of Processor IS
 
 			-- EXTERNAL INPUT
 			clk : std_logic;
+			rst_in : std_logic;
 			reset : std_logic; 
 	
 			-- FROM IF/ID BUFFER
@@ -448,6 +448,9 @@ Architecture Processor_Archi of Processor IS
 
 	--END WRITE BACK STAGE OUTPUTS
 --=================================================================================================================================================
+  --Global Reset for Buffers and Registers
+  signal Reset : std_logic;
+  
 BEGIN
 	--ALIASES AS SIGNALS
 	MEM_WB_OUT_WE1R <= MEM_WB_OUT_WB(1);
@@ -463,8 +466,9 @@ BEGIN
 			PCbranch 	=> 	ID_OUT_PCBranch,
 			BranchS 	=> 	ID_OUT_PCBranchS,
 			WB 		=> 	WB_OUT_WB,
+			PCreset => Reset, --To Do Hazard Detection Unit
 			PCS 		=> 	MEM_WB_OUT_WB(3),
-			NOP 		=> 	'0',   		--TODO to be replaced with hazard hazard detection unit output
+			PCen =>  '1', --To Do Hazard Detection Unit
 			CurrentPC 	=> 	IF_OUT_PC,
 			PCnext 		=> 	IF_OUT_PCnext,
 			Instruction 	=> 	IF_OUT_instr
@@ -480,15 +484,13 @@ BEGIN
 		  
 			clk		=>	CLK,
 			reset		=>	Reset,
-			en		=>	'1',
+			en		=>	'1', --To DO Hazard Detection Unit
 			
 			--INPUTS
 			d_PC 		=> 	IF_OUT_PC,
 			d_PCnext 	=> 	IF_OUT_PCnext,
 			d_Instruction 	=> 	IF_OUT_instr,
 			d_INPORT 	=> 	IN_PORT,
-			NOP 		=> 	'0',       	--TODO to be replaced with hazard hazard detection unit output
-			IF_FLUSH	=>	'0',  		--TODO to be replaced with hazard hazard detection unit output
 			d_INT 		=> 	INTR_IN,
 			
 			--OUTPUTS
@@ -511,6 +513,7 @@ BEGIN
 
 			-- EXTERNAL INPUT
 			clk 		=>	CLK,
+			rst_in => RST_IN,
 			reset		=>	Reset,
 	
 			-- FROM IF/ID BUFFER
