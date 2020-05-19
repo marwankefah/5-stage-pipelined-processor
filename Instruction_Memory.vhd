@@ -42,7 +42,7 @@ BEGIN
   R_we <= '0';
   R_Din1 <= (others => '0');
   R_Din2 <= (others => '0');
-  Instruction(31 DOWNTO 16) <= R_Dout1; 
-  Instruction(15 DOWNTO 0)  <= R_Dout2;
+  Instruction(31 DOWNTO 16) <= R_Dout2; 
+  Instruction(15 DOWNTO 0)  <= R_Dout1;
 
 END InstMemArchi;     
