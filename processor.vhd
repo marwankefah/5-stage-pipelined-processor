@@ -115,7 +115,7 @@ Architecture Processor_Archi of Processor IS
 			-- CONTROL SIGNALS TO ID/EX BUFFER
 			WB : out std_logic_vector(4 downto 0);
 			MEM : out std_logic_vector(10 downto 0);
-			EX : out std_logic_vector(10 downto 0);
+			EX : out std_logic_vector(12 downto 0);
 			opcode : out std_logic_vector(5 downto 0);
 			INPS : out std_logic_vector(1 downto 0);
 		
@@ -146,7 +146,7 @@ Architecture Processor_Archi of Processor IS
 			-- INPUTS 
 			D_WB : in std_logic_vector(4 downto 0);
 			D_MEM : in std_logic_vector(10 downto 0);
-			D_EX : in std_logic_vector(10 downto 0);
+			D_EX : in std_logic_vector(12 downto 0);
 			D_opcode : in std_logic_vector(5 downto 0);
 			D_INPS : in std_logic_vector(1 downto 0);
 			D_int : in std_logic;
@@ -164,7 +164,7 @@ Architecture Processor_Archi of Processor IS
 			-- OUTPUTS
 			Q_WB : out std_logic_vector(4 downto 0);
 			Q_MEM : out std_logic_vector(10 downto 0);
-			Q_EX : out std_logic_vector(10 downto 0);
+			Q_EX : out std_logic_vector(12 downto 0);
 			Q_opcode : out std_logic_vector(5 downto 0);
 			Q_INPS : out std_logic_vector(1 downto 0);
 			Q_int : out std_logic;
@@ -197,7 +197,7 @@ Architecture Processor_Archi of Processor IS
 			B:    		IN std_logic_vector(1  DOWNTO 0);
 			IMMe: 		IN std_logic_vector(31 DOWNTO 0);
 			--Control input begin
-			ID_EX_EX:  	IN std_logic_vector(10 DOWNTO 0);
+			ID_EX_EX:  	IN std_logic_vector(12 DOWNTO 0);
 			ID_EX_MEM: 	IN std_logic_vector(10 DOWNTO 0);
 			ID_EX_WB:  	IN std_logic_vector(4 DOWNTO 0);
 			--Control input end
@@ -352,7 +352,7 @@ Architecture Processor_Archi of Processor IS
 	
 	signal ID_OUT_WB : 		std_logic_vector(4 downto 0);
 	signal ID_OUT_MEM :		std_logic_vector(10 downto 0);
-	signal ID_OUT_EX : 		std_logic_vector(10 downto 0);
+	signal ID_OUT_EX : 		std_logic_vector(12 downto 0);
 	signal ID_OUT_opcode : 		std_logic_vector(5 downto 0);
 	signal ID_OUT_INPS : 		std_logic_vector(1 downto 0);
 	signal ID_OUT_RD1 : 		std_logic_vector(31 downto 0);
@@ -374,7 +374,7 @@ Architecture Processor_Archi of Processor IS
 
 	Signal ID_EX_OUT_WB : 		std_logic_vector(4 downto 0);
 	Signal ID_EX_OUT_MEM : 		std_logic_vector(10 downto 0);
-	Signal ID_EX_OUT_EX :  		std_logic_vector(10 downto 0);
+	Signal ID_EX_OUT_EX :  		std_logic_vector(12 downto 0);
 	Signal ID_EX_OUT_opcode :  	std_logic_vector(5 downto 0);
 	Signal ID_EX_OUT_INPS :  	std_logic_vector(1 downto 0);
 	Signal ID_EX_OUT_int :  	std_logic;

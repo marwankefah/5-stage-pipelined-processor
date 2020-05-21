@@ -8,7 +8,7 @@ PORT(
 		clk,reset,en : IN std_logic;
 		
 		-- INPUTS
-	d_PC:          IN std_logic_vector(31 DOWNTO 0);
+	  d_PC:          IN std_logic_vector(31 DOWNTO 0);
     d_PCnext:      IN std_logic_vector(31 DOWNTO 0);
     d_Instruction: IN std_logic_vector(31 DOWNTO 0);
     d_INPORT:      IN std_logic_vector(31 DOWNTO 0);
