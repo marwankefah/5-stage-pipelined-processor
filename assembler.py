@@ -64,10 +64,10 @@ def parseInst(lst, fillFrom):
         s += bin(int(lst[2][-1]))[2:].zfill(3)
         s = bin(int(lst[3], 16))[2:].zfill(16) + s;
     if (lst[0] in thirtyTwo):
-        fill_ram_mem(s[16:32].zfill(16), fillFrom)
-        fill_ram_mem(s[0:16].zfill(16), fillFrom + 1)
+        fill_ram_mem(s[16:32].ljust(16,'0'), fillFrom)
+        fill_ram_mem(s[0:16].ljust(16,'0'), fillFrom + 1)
     else:
-        fill_ram_mem(s.zfill(16), fillFrom)
+        fill_ram_mem(s.ljust(16,'0'), fillFrom)
 
 
 fillFrom = 0
