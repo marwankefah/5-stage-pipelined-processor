@@ -1,3 +1,5 @@
+import sys
+
 instDict = {"NOP": "000000", "SETC": "000001", "CLRC": "000010", "NOT": "000011", "INC": "000100", "DEC": "000101",
             "OUT": "000110", "IN": "000111", "SWAP": "001000", "ADD": "001001", "IADD": "101010", "SUB": "001011",
             "AND": "001100", "OR": "001101", "SHL": "101110", "SHR": "101111", "PUSH": "010000", "POP": "010001",
@@ -8,7 +10,13 @@ noSource = []
 thirtyTwo = ['IADD', 'SHL', 'SHR', 'LDM', 'LDD', 'STD']
 noSource = ['NOP', 'SETC', 'CLRC', 'RET', 'RTI']
 anotherSrc = ['ADD', 'IADD', 'SUB', 'AND', 'OR']
-PATH = 'C:\\Users\\maraw\\Desktop\\testcases\\Branch.asm'
+PATH = ''
+try:
+    PATH = sys.argv[1]
+except:
+    print('Error In Path Name')
+    sys.exit(1)
+
 f = open(PATH, 'r')
 lines = [word.strip() for word in f.readlines()]
 f.close()
@@ -37,29 +45,30 @@ def fill_ram_mem(bits, idx):
 
 
 def parseInst(lst, fillFrom):
-        s = instDict[lst[0]]
-        if(lst[0] not in noSource):
-            s = s + bin(int(lst[1][-1]))[2:].zfill(3)
-        if (lst[0] in anotherSrc):
-            s += bin(int(lst[2][-1]))[2:].zfill(3)
-        if (lst[0] in anotherSrc and lst[0] != 'IADD'):
-            s += bin(int(lst[3][-1]))[2:].zfill(3)
-        if (lst[0] in ['SWAP', 'LDD', 'STD']):
-            s = s + '000'
-        if (lst[0] == 'SWAP'):
-            s += bin(int(lst[2][-1]))[2:].zfill(3)
-        if (lst[0] in ['LDD', 'STD']):
-            s = bin(int(lst[2],16))[2:].zfill(16)[4:16] + s + bin(int(lst[2],16))[2:].zfill(16)[0:4]
-        if (lst[0] in ['SHL', 'SHR', 'LDM']):
-            s = bin(int(lst[2],16))[2:].zfill(16) + s;
-        if(lst[0]=='IADD'):
-            s+=bin(int(lst[2][-1]))[2:].zfill(3)
-            s = bin(int(lst[3],16))[2:].zfill(16) + s;
-        if(lst[0] in thirtyTwo):
-            fill_ram_mem(s[16:32].zfill(16), fillFrom)
-            fill_ram_mem(s[0:16].zfill(16), fillFrom + 1)
-        else:
-            fill_ram_mem(s.zfill(16), fillFrom)
+    s = instDict[lst[0]]
+    if (lst[0] not in noSource):
+        s = s + bin(int(lst[1][-1]))[2:].zfill(3)
+    if (lst[0] in anotherSrc):
+        s += bin(int(lst[2][-1]))[2:].zfill(3)
+    if (lst[0] in anotherSrc and lst[0] != 'IADD'):
+        s += bin(int(lst[3][-1]))[2:].zfill(3)
+    if (lst[0] in ['SWAP', 'LDD', 'STD']):
+        s = s + '000'
+    if (lst[0] == 'SWAP'):
+        s += bin(int(lst[2][-1]))[2:].zfill(3)
+    if (lst[0] in ['LDD', 'STD']):
+        s = bin(int(lst[2], 16))[2:].zfill(16)[4:16] + s + bin(int(lst[2], 16))[2:].zfill(16)[0:4]
+    if (lst[0] in ['SHL', 'SHR', 'LDM']):
+        s = bin(int(lst[2], 16))[2:].zfill(16) + s;
+    if (lst[0] == 'IADD'):
+        s += bin(int(lst[2][-1]))[2:].zfill(3)
+        s = bin(int(lst[3], 16))[2:].zfill(16) + s;
+    if (lst[0] in thirtyTwo):
+        fill_ram_mem(s[16:32].zfill(16), fillFrom)
+        fill_ram_mem(s[0:16].zfill(16), fillFrom + 1)
+    else:
+        fill_ram_mem(s.zfill(16), fillFrom)
+
 
 fillFrom = 0
 i = 0;
