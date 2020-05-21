@@ -278,6 +278,16 @@ Architecture Processor_Archi of Processor IS
 		);
 	END COMPONENT;
 	
+	COMPONENT InterruptHandling IS
+    PORT(
+        INT:            in std_logic;
+        RST:            in std_logic;
+        OPCODE:         in std_logic_vector(5 DOWNTO 0); 
+        ID_INTS:        out std_logic_vector(1 DOWNTO 0); 
+        EX_INTS:        out std_logic_vector(1 DOWNTO 0)
+        );
+  END COMPONENT;
+	
 	COMPONENT MEM_WB_Buffer IS
 		PORT( 		 
 			Clk,Rst,en :	IN std_logic;
@@ -442,6 +452,10 @@ Architecture Processor_Archi of Processor IS
 
 	--END MEMORY/WB BUFFER
 --=================================================================================================================================================
+  --Interrupt Control Signals
+  signal ID_INTS: std_logic_vector(1 downto 0);
+  signal EX_INTS: std_logic_vector(1 downto 0);
+--=================================================================================================================================================
 	--WRITE BACK STAGE OUTPUTS
 
 	signal WB_OUT_WB : 		std_logic_vector(31 downto 0);
@@ -546,7 +560,7 @@ BEGIN
 			HZ_NOP		=>	'0', 		--TODO to be replaced with hazard_detection_unit output
 	
 			-- FROM INTERRUPT HANDLING UNIT
-			INS_ID 		=>	"01",		--TODO TO BE REPLACED WITH INT_HANDLING_UNIT OUTPUT 
+			INS_ID 		=>	ID_INTS,		--TODO TO BE REPLACED WITH INT_HANDLING_UNIT OUTPUT 
 	
 	
 			-- OUTPUTS
@@ -633,7 +647,7 @@ BEGIN
 			--EXTERNAL INPUT
 			CLK		=>	CLK,
 			Reset 		=>	Reset, 
-			EX_INTS		=>	"01",		--TODO TO BE REPLACED WITH INT_HANDLING_UNIT OUTPUT
+			EX_INTS		=>	EX_INTS,		--TODO TO BE REPLACED WITH INT_HANDLING_UNIT OUTPUT
 			RD1		=> 	ID_EX_OUT_RD1,
 			RD2 		=>  	ID_EX_OUT_RD2,
 			RD2N		=>  	ID_EX_OUT_RD2,	-- TODO to be replaced with Forwarding out
@@ -747,6 +761,17 @@ BEGIN
 		);
 
 	--END MEMORY STAGE
+--=================================================================================================================================================
+  --Interrupt Handler
+  IntHandler: InterruptHandling
+    port map(
+      INT => EX_MEM_OUT_INT,
+      RST => '0',
+      OPCODE => EX_MEM_OUT_OPCODE,
+      ID_INTS => ID_INTS,
+      EX_INTS => EX_INTS
+    );
+  --End Interrupt Handler
 --=================================================================================================================================================
 	--MEM/WB BUFFER
 	MEM_WB_BUFF: MEM_WB_Buffer
