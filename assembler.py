@@ -57,15 +57,17 @@ def parseInst(lst, fillFrom):
     if (lst[0] == 'SWAP'):
         s += bin(int(lst[2][-1]))[2:].zfill(3)
     if (lst[0] in ['LDD', 'STD']):
-        s = bin(int(lst[2], 16))[2:].zfill(16)[4:16] + s + bin(int(lst[2], 16))[2:].zfill(16)[0:4]
+        s =  s + bin(int(lst[2], 16))[2:].zfill(16)[0:4]
+        s= s.ljust(16,'0')+bin(int(lst[2], 16))[2:].zfill(16)[4:16]
     if (lst[0] in ['SHL', 'SHR', 'LDM']):
-        s = bin(int(lst[2], 16))[2:].zfill(16) + s;
+        s.ljust(16,'0')
+        s = s+bin(int(lst[2], 16))[2:].zfill(16);
     if (lst[0] == 'IADD'):
         s += bin(int(lst[2][-1]))[2:].zfill(3)
-        s = bin(int(lst[3], 16))[2:].zfill(16) + s;
+        s = s.ljust(16,'0')+bin(int(lst[3], 16))[2:].zfill(16)
     if (lst[0] in thirtyTwo):
-        fill_ram_mem(s[16:32].ljust(16,'0'), fillFrom)
-        fill_ram_mem(s[0:16].ljust(16,'0'), fillFrom + 1)
+        fill_ram_mem(s[16:32].ljust(16,'0'), fillFrom+1)
+        fill_ram_mem(s[0:16].ljust(16,'0'), fillFrom)
     else:
         fill_ram_mem(s.ljust(16,'0'), fillFrom)
 
@@ -89,3 +91,4 @@ while (i < len(parsedInstList)):
     fillFrom += 1
     i += 1
 f.close()
+
