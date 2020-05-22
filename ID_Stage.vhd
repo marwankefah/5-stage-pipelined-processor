@@ -134,7 +134,7 @@ architecture ID_Stage_arch of ID_Stage is
 	-- CONSTANTS
 	constant ZERO : std_logic_vector(28 downto 0)    := "00000000000000000000000000000";
 	constant PUSHF : std_logic_vector(28 downto 0)   := "00000000000001100011010100000";
-	constant RestoreF: std_logic_vector(28 downto 0) := "00000000000110000000000000000";
+	constant RestoreF: std_logic_vector(28 downto 0) := "00000000000110100000000000000";
 
 	-- SIGNALS
 	signal cntrl_signals : std_logic_vector(34 downto 0);
