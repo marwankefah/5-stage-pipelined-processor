@@ -17,6 +17,7 @@ PORT (	--EXTERNAL INPUT
 	--RD2 comming from memory stage
 	RD2N: IN std_logic_vector(31 DOWNTO 0);
 	WB:   IN std_logic_vector(31 DOWNTO 0);
+	MEMR: IN std_logic_vector(31 DOWNTO 0);
 	ALUr: IN std_logic_vector(31 DOWNTO 0);
 	A:    IN std_logic_vector(1  DOWNTO 0);
 	B:    IN std_logic_vector(1  DOWNTO 0);
@@ -153,7 +154,7 @@ ALU_instance: ALU 	port map(
 
 FlagsMux: MUX_2x1 generic map(4) port map (
 					in0 => CCROut_ALU, 
-					in1 => WB(3 DOWNTO 0) ,
+					in1 => MEMR(3 DOWNTO 0) ,
 					sel =>ID_EX_EX(0), 		  --FLAGS
 					outm=> flagsMuxOut
 						);

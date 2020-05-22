@@ -192,6 +192,7 @@ Architecture Processor_Archi of Processor IS
 			--RD2 comming from memory stage
 			RD2N: 		IN std_logic_vector(31 DOWNTO 0);
 			WB:   		IN std_logic_vector(31 DOWNTO 0);
+			MEMR:		IN std_logic_vector(31 DOWNTO 0);
 			ALUr: 		IN std_logic_vector(31 DOWNTO 0);
 			A:    		IN std_logic_vector(1  DOWNTO 0);
 			B:    		IN std_logic_vector(1  DOWNTO 0);
@@ -692,7 +693,8 @@ BEGIN
 			RD1		=> 	ID_EX_OUT_RD1,
 			RD2 		=>  	ID_EX_OUT_RD2,
 			RD2N		=>  	ID_EX_OUT_RD2,	-- TODO to be replaced with Forwarding out
-			WB		=>    	MEM_OUT_MEMR,	-- TODO to be replaced with writeback output
+			WB		=>    	WB_OUT_WB,	-- TODO to be replaced with writeback output
+			MEMR =>			MEM_OUT_MEMR,
 			ALUr		=>  	EX_MEM_OUT_ALUResult, 	-- TODO to be replaced with ALur output from design
 			A		=>      FU_A,   	-- TODO to be replaced with Forwarding out
 			B		=>      FU_B,	  	-- TODO to be replaced with forwarding out
