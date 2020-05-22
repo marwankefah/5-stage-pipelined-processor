@@ -19,8 +19,9 @@ end InterruptHandling;
              "11" when RST = '1' else 
              "01";
           
-  EX_INTS <= "00" when RST = '1' else 
+  EX_INTS <= "00" when OPCODE = "011110" else --RTI_OP 
              "10" when INT = '1' else
+             "11" when RST = '1' else
              "01";
                       
  end Arch_INThandling;

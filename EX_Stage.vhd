@@ -94,13 +94,13 @@ signal flagsMuxOut:std_logic_vector(3 DOWNTO 0);
 signal flagSelecExtend:std_logic_vector(1 DOWNTO 0);
 
 
-constant PUSHPC : std_logic_vector(15 downto 0) := "1100001010100000";
-constant RESETop : std_logic_vector(15 downto 0) :="0000000101001000";
+constant PUSHPC : std_logic_vector(15 downto 0) := "1100001010100000";                                                             
+constant POPF : std_logic_vector(15 downto 0)   := "0010000001010000";
 
 Begin
 
 EX_INT_MUX_MEM: MUX_4x1 generic map(11) port map(
-					in0 => RESETop(15 DOWNTO 5), 
+					in0 => POPF(15 DOWNTO 5), 
 					in1 => ID_EX_MEM,
 					in2 => PUSHPC(15 DOWNTO 5), 
 					in3 => (others=>'0'),
@@ -108,7 +108,7 @@ EX_INT_MUX_MEM: MUX_4x1 generic map(11) port map(
 					outm=> EX_MEM_MEM
 						);
 EX_INT_MUX_WB: MUX_4x1 generic map(5) port map(
-					in0 => RESETop(4 DOWNTO 0), 
+					in0 => POPF(4 DOWNTO 0), 
 					in1 => ID_EX_WB,
 					in2 => PUSHPC(4 DOWNTO 0) , 
 					in3 => (others=>'0'),

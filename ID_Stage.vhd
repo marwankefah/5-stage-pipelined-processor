@@ -132,9 +132,9 @@ architecture ID_Stage_arch of ID_Stage is
 	END component;
 
 	-- CONSTANTS
-	constant ZERO : std_logic_vector(28 downto 0) := "00000000000000000000000000000";
-	constant PUSHF : std_logic_vector(28 downto 0) := "00000000000001100011010100000";
-	constant POPF : std_logic_vector(28 downto 0) := "00000000000110010000001001000";
+	constant ZERO : std_logic_vector(28 downto 0)    := "00000000000000000000000000000";
+	constant PUSHF : std_logic_vector(28 downto 0)   := "00000000000001100011010100000";
+	constant RestoreF: std_logic_vector(28 downto 0) := "00000000000110000000000000000";
 
 	-- SIGNALS
 	signal cntrl_signals : std_logic_vector(34 downto 0);
@@ -183,7 +183,7 @@ begin
 
 	-- CONTROL SIGNALS
 	control_mux1 : MUX_2x1 generic map(29) port map(c_next_signals,ZERO,HZ_NOP,next_signals_stall);
-	control_mux2 : MUX_4x1 generic map(29) port map(PUSHF,next_signals_stall,POPF,ZERO,INS_ID,next_signals_hazard);
+	control_mux2 : MUX_4x1 generic map(29) port map(PUSHF,next_signals_stall,RestoreF,ZERO,INS_ID,next_signals_hazard);
 	WB <= next_signals_hazard(4 downto 0);
 	MEM <=	next_signals_hazard(15 downto 5);
 	EX <= next_signals_hazard(28 downto 16);
