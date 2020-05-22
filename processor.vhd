@@ -209,6 +209,39 @@ Architecture Processor_Archi of Processor IS
 		);
 	END COMPONENT;
 
+	COMPONENT Forwarding_Unit IS
+		PORT (	
+		  en:		IN std_logic;
+			ID_EX_RR1 :	IN std_logic_vector (2 DOWNTO 0);
+			ID_EX_RR2 : 	IN std_logic_vector (2 DOWNTO 0) ;
+			
+			IF_ID_RR1 : 	IN std_logic_vector (2 DOWNTO 0);
+			
+			ID_EX_INPS: 	IN std_logic_vector (1 DOWNTO 0);
+			
+			EX_MEM_WR1 : 	IN std_logic_vector (2 DOWNTO 0);
+			EX_MEM_WR2 : 	IN std_logic_vector (2 DOWNTO 0);
+			
+			MEM_WB_WR1 : 	IN std_logic_vector (2 DOWNTO 0);
+			MEM_WB_WR2 : 	IN std_logic_vector (2 DOWNTO 0);
+			
+			EX_MEM_WE1R:	IN std_logic;	
+			EX_MEM_WE2R:	IN std_logic;
+			
+			MEM_WB_WE1R:	IN std_logic;	
+			MEM_WB_WE2R:	IN std_logic;
+			
+			
+			EX_MEM_RD2:	IN std_logic_vector (31 DOWNTO 0);
+			MEM_WB_RD2:	IN std_logic_vector (31 DOWNTO 0);
+
+			RD2N1: 		OUT std_logic_vector(31 DOWNTO 0);
+			RD2N2: 		OUT std_logic_vector(31 DOWNTO 0);
+			A,B,C : 	OUT std_logic_vector(1  DOWNTO 0)
+			);   
+		
+	END COMPONENT;
+
 	COMPONENT EX_MEM_Buffer IS
 		PORT( 		 
 			Clk,Rst,en: 	IN stD_logic;
@@ -410,6 +443,14 @@ Architecture Processor_Archi of Processor IS
 
 	--END EXECUTE STAGE OUTPUTS
 --=================================================================================================================================================
+	--FORWARDING UNIT OUTPUTS
+	
+	signal FU_RD1_OUT:	std_logic_vector(31 downto 0);
+	signal FU_RD2_OUT:	std_logic_vector(31 downto 0);
+	signal FU_A,FU_B,FU_C:	std_logic_vector(1  downto 0);
+	
+	--END FORWARDING UNIT OUTPUTS
+--=================================================================================================================================================
 	--OUTPUT OF  EXECUTE/MEMORY BUFFER
 
 	Signal EX_MEM_OUT_WB:     	std_logic_vector(4 downto 0);
@@ -551,7 +592,7 @@ BEGIN
 			EX_MEM_ALUr 	=>	EX_MEM_OUT_ALUResult,
 	
 			-- FROM FORWARDING UNIT
-			F_C 		=>	"00",		--TODO to be replaced with forwarding unit output
+			F_C 		=>	FU_C,		--TODO to be replaced with forwarding unit output
 			
 			-- FROM EX STAGE
 			CCR		=>	CCR, 
@@ -653,8 +694,8 @@ BEGIN
 			RD2N		=>  	ID_EX_OUT_RD2,	-- TODO to be replaced with Forwarding out
 			WB		=>    	MEM_OUT_MEMR,	-- TODO to be replaced with writeback output
 			ALUr		=>  	EX_MEM_OUT_ALUResult, 	-- TODO to be replaced with ALur output from design
-			A		=>      "00",   	-- TODO to be replaced with Forwarding out
-			B		=>      "00",	  	-- TODO to be replaced with forwarding out
+			A		=>      FU_A,   	-- TODO to be replaced with Forwarding out
+			B		=>      FU_B,	  	-- TODO to be replaced with forwarding out
 			IMMe		=> 	ID_EX_OUT_IMMe,
 			--Control input begin
 			ID_EX_EX	=>	ID_EX_OUT_EX,
@@ -682,6 +723,43 @@ BEGIN
 		);
 
 	--END OUTPUT PORT REGISTER
+	--=================================================================================================================================================
+	--Forwarding UNIT
+
+	FU_UNIT : Forwarding_Unit
+		port map(	
+		    en=>	'1',  	--TODO ENABLE ="1" to check forwarding unit	  
+				ID_EX_RR1 =>	ID_EX_OUT_RR1,   
+ 				ID_EX_RR2 => 	ID_EX_OUT_RR2,   
+	
+				IF_ID_RR1 => 	ID_OUT_RR1,	--TODO CHECK IF THIS RR1 TO compare (DANIEL)   
+	
+				ID_EX_INPS=>    ID_EX_OUT_INPS,
+	
+				EX_MEM_WR1 => 	EX_MEM_OUT_WR1,  
+				EX_MEM_WR2 => 	EX_MEM_OUT_WR2,   
+	
+				MEM_WB_WR1 => 	MEM_WB_OUT_WR1,  
+				MEM_WB_WR2 => 	MEM_WB_OUT_WR2,   
+	
+				EX_MEM_WE1R=>	EX_MEM_OUT_WB(1),	
+				EX_MEM_WE2R=>	EX_MEM_OUT_WB(0),  
+	
+				MEM_WB_WE1R=>	MEM_WB_OUT_WB(1),  	
+				MEM_WB_WE2R=>	MEM_WB_OUT_WB(0),  
+	
+	
+				EX_MEM_RD2=>	EX_MEM_OUT_RD2,
+				MEM_WB_RD2=>	MEM_WB_OUT_RD2,  
+
+				RD2N1=> 	FU_RD1_OUT,	  
+				RD2N2=> 	FU_RD2_OUT,	  
+				A=> 	FU_A,
+				B=>		FU_B,
+				C=>  FU_C
+				);
+
+	--END FORWARDING UNIT
 --=================================================================================================================================================
 	--EXECUTE/MEM  BUFFER
 
