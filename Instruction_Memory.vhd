@@ -16,7 +16,7 @@ COMPONENT GenRam IS
 	GENERIC(
 	  DataWidth    : INTEGER := 16;
 	  AddressWidth : INTEGER := 32;
-	  AddressSpace : INTEGER := 39 --(2^31-1)
+	  AddressSpace : INTEGER := 2047
 	  );
 	PORT(
 		clk     : IN  std_logic;
@@ -42,7 +42,7 @@ BEGIN
   R_we <= '0';
   R_Din1 <= (others => '0');
   R_Din2 <= (others => '0');
-  Instruction(31 DOWNTO 16) <= R_Dout1; 
-  Instruction(15 DOWNTO 0)  <= R_Dout2;
+  Instruction(31 DOWNTO 16) <= R_Dout2; 
+  Instruction(15 DOWNTO 0)  <= R_Dout1;
 
 END InstMemArchi;     

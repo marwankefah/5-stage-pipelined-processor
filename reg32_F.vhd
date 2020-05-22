@@ -13,7 +13,7 @@ end reg32_F;
 
 architecture reg32_F_arch of reg32_F is
 begin
-	process(clk, reset)
+	process(clk)
 	begin
 		if (reset = '1') then 
 			q <= (others=>'0');

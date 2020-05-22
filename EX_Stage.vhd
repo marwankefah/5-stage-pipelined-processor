@@ -22,7 +22,7 @@ PORT (	--EXTERNAL INPUT
 	B:    IN std_logic_vector(1  DOWNTO 0);
 	IMMe: IN std_logic_vector(31 DOWNTO 0);
 	--Control input begin
-	ID_EX_EX:   IN std_logic_vector(10 DOWNTO 0);
+	ID_EX_EX:   IN std_logic_vector(12 DOWNTO 0);
 	ID_EX_MEM:  IN std_logic_vector(10 DOWNTO 0);
 	ID_EX_WB:   IN std_logic_vector(4 DOWNTO 0);
 	--Control input end
@@ -43,6 +43,8 @@ COMPONENT CCR_Reg is
 		   enF : in std_logic;
 		   stC:  in std_logic;
 		   clC:  in std_logic;
+		   clZ:  in std_logic;
+		   clN:  in std_logic;
 		   clF:	 in std_logic;
 		   D_CCR : in std_logic_vector(3 downto 0);
 		   Q_CCR : out std_logic_vector(3 downto 0)
@@ -74,7 +76,9 @@ COMPONENT MUX_4x1 IS
 	);
 END COMPONENT;
 COMPONENT ALU IS
-PORT (  inA:IN std_logic_vector(31 DOWNTO 0);
+PORT (  
+  en:IN std_logic;
+  inA:IN std_logic_vector(31 DOWNTO 0);
  	inB : IN std_logic_vector(31 DOWNTO 0) ;
 	sel: in std_logic_vector (2 DOWNTO 0);
 	ALUOut: OUT std_logic_vector(31 DOWNTO 0);
@@ -90,13 +94,13 @@ signal flagsMuxOut:std_logic_vector(3 DOWNTO 0);
 signal flagSelecExtend:std_logic_vector(1 DOWNTO 0);
 
 
-constant PUSHPC : std_logic_vector(15 downto 0) := "1100001010100000";
-constant RESETop : std_logic_vector(15 downto 0) :="0000000101001000";
+constant PUSHPC : std_logic_vector(15 downto 0) := "1100001010100000";                                                             
+constant POPF : std_logic_vector(15 downto 0)   := "0010000001010000";
 
 Begin
 
 EX_INT_MUX_MEM: MUX_4x1 generic map(11) port map(
-					in0 => RESETop(15 DOWNTO 5), 
+					in0 => POPF(15 DOWNTO 5), 
 					in1 => ID_EX_MEM,
 					in2 => PUSHPC(15 DOWNTO 5), 
 					in3 => (others=>'0'),
@@ -104,7 +108,7 @@ EX_INT_MUX_MEM: MUX_4x1 generic map(11) port map(
 					outm=> EX_MEM_MEM
 						);
 EX_INT_MUX_WB: MUX_4x1 generic map(5) port map(
-					in0 => RESETop(4 DOWNTO 0), 
+					in0 => POPF(4 DOWNTO 0), 
 					in1 => ID_EX_WB,
 					in2 => PUSHPC(4 DOWNTO 0) , 
 					in3 => (others=>'0'),
@@ -117,7 +121,7 @@ OP2SMux: MUX_4x1 generic map(32) port map (
 					in1 => std_logic_vector(to_unsigned(1,32)),
 					in2 => IMMe , 
 					in3 => IMMe,
-					sel => ID_EX_EX(9 DOWNTO 8), --OP2S
+					sel => ID_EX_EX(11 DOWNTO 10), --OP2S
 					outm=> OP2SMux_BMux
 						);
 
@@ -139,9 +143,10 @@ Bmux: MUX_4x1 generic map(32) port map (
 					outm=> BmuxOut
 						);
 ALU_instance: ALU 	port map(
+          en     =>ID_EX_EX(1),
 					inA    =>AmuxOut,
 					inB    =>BmuxOut,
-					sel    =>ID_EX_EX(7 DOWNTO 5),  --ALUOP
+					sel    =>ID_EX_EX(9 DOWNTO 7),  --ALUOP
 					ALUOut =>ALUResult,
 					CCR    => CCROut_ALU
 						);
@@ -157,13 +162,15 @@ FlagsMux: MUX_2x1 generic map(4) port map (
 CCR_REG_EX: CCR_Reg		 port map (
 					clk =>clk,
 		   			reset => reset,
-		   			stC=> ID_EX_EX(4),
-		   			clC=> ID_EX_EX(3),
+		   			stC=> ID_EX_EX(6),
+		   			clC=> ID_EX_EX(5),
+		   			clZ=> ID_EX_EX(4),
+		   			clN=> ID_EX_EX(3),
 		   			clF=> ID_EX_EX(2),
 					enF =>ID_EX_EX(1),
 		   			D_CCR=>flagsMuxOut,
 		   			Q_CCR=>CCR
-						);
+					);
 END Execute_Stage_Archi;
 
 

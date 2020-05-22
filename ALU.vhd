@@ -24,7 +24,9 @@ LIBRARY IEEE;
 USE IEEE.std_logic_1164.all;
 use ieee.numeric_std.all;
 ENTITY ALU IS
-PORT (	inA:IN std_logic_vector(31 DOWNTO 0);
+PORT (	
+  en: IN std_logic;
+  inA:IN std_logic_vector(31 DOWNTO 0);
  	inB : IN std_logic_vector(31 DOWNTO 0) ;
 	sel: IN std_logic_vector (2 DOWNTO 0);
 	ALUOut: OUT std_logic_vector(31 DOWNTO 0);
@@ -44,7 +46,7 @@ inAUnsigned<=unsigned(inA);
 inBUnsigned<=unsigned(inB);
 
 
-process(sel,inAUnsigned,inBUnsigned)
+process(en,sel,inAUnsigned,inBUnsigned)
 variable shiftCount:integer :=0;
 begin
 shiftCount:=   to_integer(unsigned(inB)); -- can be more optimized
@@ -81,20 +83,14 @@ end process;
 
 
 --Output after operation
-ALUOut<=std_logic_vector(extendedOutput(31 DOWNTO 0));
+ALUOut<= std_logic_vector(extendedOutput(31 DOWNTO 0));
 -- Zero Flag
 CCR(0)<='1' when extendedOutput(31 DOWNTO 0) = (extendedOutput(31 DOWNTO 0)'range => '0') else '0';
 --Negative Flag knows as Sign Flag
 CCR(1)<=extendedOutput(31);
 --Carry out flag
-CCR(2)<=extendedOutput(32);
+CCR(2)<= not(extendedOutput(32)) when (sel = "001" and en = '1')
+         else extendedOutput(32) when (sel = "000" or sel = "101" or sel = "110") and en = '1';
 CCR(3)<='0';
 END ALUArchi;
-
-
-
-
-
-
-
 

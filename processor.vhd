@@ -6,7 +6,7 @@ ENTITY Processor IS
 	PORT (
 		--EXTERNAL INPUT
 		CLK:		IN std_logic;
-		Reset :	 	IN std_logic; 
+		Reset:	 	IN std_logic; 
 		INTR_IN:	IN std_logic;
 		IN_PORT:	IN std_logic_vector(31 DOWNTO 0);
 
@@ -35,12 +35,13 @@ Architecture Processor_Archi of Processor IS
 			PCbranch:   IN std_logic_vector(31 downto 0);
 			BranchS:    IN std_logic;
 			WB:         IN std_logic_vector(31 downto 0);
+			PCreset:    IN std_logic;
 			PCS:        IN std_logic;
-			NOP:        IN std_logic;
+			PCen:       IN std_logic;
 			clk:        IN std_logic;
 			CurrentPC:  OUT std_logic_vector(31 downto 0);
 			PCnext:     OUT std_logic_vector(31 downto 0);
-       			Instruction:OUT std_logic_vector(31 downto 0) 
+   			Instruction:OUT std_logic_vector(31 downto 0) 
               
 		);
 	END COMPONENT;
@@ -54,8 +55,6 @@ Architecture Processor_Archi of Processor IS
 			d_PCnext:      IN std_logic_vector(31 DOWNTO 0);
 			d_Instruction: IN std_logic_vector(31 DOWNTO 0);
 			d_INPORT:      IN std_logic_vector(31 DOWNTO 0);
-			NOP:           IN std_logic;
-			IF_FLUSH:      IN std_logic;
 			d_INT:         IN std_logic;
        
 			-- OUTPUTS
@@ -74,6 +73,7 @@ Architecture Processor_Archi of Processor IS
 
 			-- EXTERNAL INPUT
 			clk : std_logic;
+			rst_in : std_logic;
 			reset : std_logic; 
 	
 			-- FROM IF/ID BUFFER
@@ -115,7 +115,7 @@ Architecture Processor_Archi of Processor IS
 			-- CONTROL SIGNALS TO ID/EX BUFFER
 			WB : out std_logic_vector(4 downto 0);
 			MEM : out std_logic_vector(10 downto 0);
-			EX : out std_logic_vector(10 downto 0);
+			EX : out std_logic_vector(12 downto 0);
 			opcode : out std_logic_vector(5 downto 0);
 			INPS : out std_logic_vector(1 downto 0);
 		
@@ -146,7 +146,7 @@ Architecture Processor_Archi of Processor IS
 			-- INPUTS 
 			D_WB : in std_logic_vector(4 downto 0);
 			D_MEM : in std_logic_vector(10 downto 0);
-			D_EX : in std_logic_vector(10 downto 0);
+			D_EX : in std_logic_vector(12 downto 0);
 			D_opcode : in std_logic_vector(5 downto 0);
 			D_INPS : in std_logic_vector(1 downto 0);
 			D_int : in std_logic;
@@ -164,7 +164,7 @@ Architecture Processor_Archi of Processor IS
 			-- OUTPUTS
 			Q_WB : out std_logic_vector(4 downto 0);
 			Q_MEM : out std_logic_vector(10 downto 0);
-			Q_EX : out std_logic_vector(10 downto 0);
+			Q_EX : out std_logic_vector(12 downto 0);
 			Q_opcode : out std_logic_vector(5 downto 0);
 			Q_INPS : out std_logic_vector(1 downto 0);
 			Q_int : out std_logic;
@@ -197,7 +197,7 @@ Architecture Processor_Archi of Processor IS
 			B:    		IN std_logic_vector(1  DOWNTO 0);
 			IMMe: 		IN std_logic_vector(31 DOWNTO 0);
 			--Control input begin
-			ID_EX_EX:  	IN std_logic_vector(10 DOWNTO 0);
+			ID_EX_EX:  	IN std_logic_vector(12 DOWNTO 0);
 			ID_EX_MEM: 	IN std_logic_vector(10 DOWNTO 0);
 			ID_EX_WB:  	IN std_logic_vector(4 DOWNTO 0);
 			--Control input end
@@ -278,6 +278,16 @@ Architecture Processor_Archi of Processor IS
 		);
 	END COMPONENT;
 	
+	COMPONENT InterruptHandling IS
+    PORT(
+        INT:            in std_logic;
+        RST:            in std_logic;
+        OPCODE:         in std_logic_vector(5 DOWNTO 0); 
+        ID_INTS:        out std_logic_vector(1 DOWNTO 0); 
+        EX_INTS:        out std_logic_vector(1 DOWNTO 0)
+        );
+  END COMPONENT;
+	
 	COMPONENT MEM_WB_Buffer IS
 		PORT( 		 
 			Clk,Rst,en :	IN std_logic;
@@ -352,7 +362,7 @@ Architecture Processor_Archi of Processor IS
 	
 	signal ID_OUT_WB : 		std_logic_vector(4 downto 0);
 	signal ID_OUT_MEM :		std_logic_vector(10 downto 0);
-	signal ID_OUT_EX : 		std_logic_vector(10 downto 0);
+	signal ID_OUT_EX : 		std_logic_vector(12 downto 0);
 	signal ID_OUT_opcode : 		std_logic_vector(5 downto 0);
 	signal ID_OUT_INPS : 		std_logic_vector(1 downto 0);
 	signal ID_OUT_RD1 : 		std_logic_vector(31 downto 0);
@@ -374,7 +384,7 @@ Architecture Processor_Archi of Processor IS
 
 	Signal ID_EX_OUT_WB : 		std_logic_vector(4 downto 0);
 	Signal ID_EX_OUT_MEM : 		std_logic_vector(10 downto 0);
-	Signal ID_EX_OUT_EX :  		std_logic_vector(10 downto 0);
+	Signal ID_EX_OUT_EX :  		std_logic_vector(12 downto 0);
 	Signal ID_EX_OUT_opcode :  	std_logic_vector(5 downto 0);
 	Signal ID_EX_OUT_INPS :  	std_logic_vector(1 downto 0);
 	Signal ID_EX_OUT_int :  	std_logic;
@@ -442,16 +452,22 @@ Architecture Processor_Archi of Processor IS
 
 	--END MEMORY/WB BUFFER
 --=================================================================================================================================================
+  --Interrupt Control Signals
+  signal ID_INTS: std_logic_vector(1 downto 0);
+  signal EX_INTS: std_logic_vector(1 downto 0);
+--=================================================================================================================================================
 	--WRITE BACK STAGE OUTPUTS
 
 	signal WB_OUT_WB : 		std_logic_vector(31 downto 0);
 
 	--END WRITE BACK STAGE OUTPUTS
 --=================================================================================================================================================
+  --Global Reset for Buffers and Registers
+  
 BEGIN
 	--ALIASES AS SIGNALS
 	MEM_WB_OUT_WE1R <= MEM_WB_OUT_WB(1);
-	MEM_WB_OUT_WE1R <= MEM_WB_OUT_WB(0);
+	MEM_WB_OUT_WE2R <= MEM_WB_OUT_WB(0);
 	MEM_WB_OUT_WDRS <= MEM_WB_OUT_WB(2);
 	
 	--FETCH STAGE
@@ -463,8 +479,9 @@ BEGIN
 			PCbranch 	=> 	ID_OUT_PCBranch,
 			BranchS 	=> 	ID_OUT_PCBranchS,
 			WB 		=> 	WB_OUT_WB,
+			PCreset => Reset, --To Do Hazard Detection Unit
 			PCS 		=> 	MEM_WB_OUT_WB(3),
-			NOP 		=> 	'0',   		--TODO to be replaced with hazard hazard detection unit output
+			PCen =>  '1', --To Do Hazard Detection Unit
 			CurrentPC 	=> 	IF_OUT_PC,
 			PCnext 		=> 	IF_OUT_PCnext,
 			Instruction 	=> 	IF_OUT_instr
@@ -480,15 +497,13 @@ BEGIN
 		  
 			clk		=>	CLK,
 			reset		=>	Reset,
-			en		=>	'1',
+			en		=>	'1', --To DO Hazard Detection Unit
 			
 			--INPUTS
 			d_PC 		=> 	IF_OUT_PC,
 			d_PCnext 	=> 	IF_OUT_PCnext,
 			d_Instruction 	=> 	IF_OUT_instr,
 			d_INPORT 	=> 	IN_PORT,
-			NOP 		=> 	'0',       	--TODO to be replaced with hazard hazard detection unit output
-			IF_FLUSH	=>	'0',  		--TODO to be replaced with hazard hazard detection unit output
 			d_INT 		=> 	INTR_IN,
 			
 			--OUTPUTS
@@ -511,6 +526,7 @@ BEGIN
 
 			-- EXTERNAL INPUT
 			clk 		=>	CLK,
+			rst_in => Reset,
 			reset		=>	Reset,
 	
 			-- FROM IF/ID BUFFER
@@ -544,7 +560,7 @@ BEGIN
 			HZ_NOP		=>	'0', 		--TODO to be replaced with hazard_detection_unit output
 	
 			-- FROM INTERRUPT HANDLING UNIT
-			INS_ID 		=>	"01",		--TODO TO BE REPLACED WITH INT_HANDLING_UNIT OUTPUT 
+			INS_ID 		=>	ID_INTS,		--TODO TO BE REPLACED WITH INT_HANDLING_UNIT OUTPUT 
 	
 	
 			-- OUTPUTS
@@ -582,7 +598,7 @@ BEGIN
 	ID_EX_BUFF : ID_EX_Buffer
 		port map(
 			clk		=>	CLK,
-			reset		=>	Reset,
+			reset		=>	'0',
 			en		=>	'1',
 		
 			-- INPUTS 
@@ -631,12 +647,12 @@ BEGIN
 			--EXTERNAL INPUT
 			CLK		=>	CLK,
 			Reset 		=>	Reset, 
-			EX_INTS		=>	"01",		--TODO TO BE REPLACED WITH INT_HANDLING_UNIT OUTPUT
+			EX_INTS		=>	EX_INTS,		--TODO TO BE REPLACED WITH INT_HANDLING_UNIT OUTPUT
 			RD1		=> 	ID_EX_OUT_RD1,
 			RD2 		=>  	ID_EX_OUT_RD2,
 			RD2N		=>  	ID_EX_OUT_RD2,	-- TODO to be replaced with Forwarding out
-			WB		=>    	ID_EX_OUT_RD2,	-- TODO to be replaced with Forwarding out
-			ALUr		=>  	ID_EX_OUT_RD2, 	-- TODO to be replaced with Forwarding out
+			WB		=>    	MEM_OUT_MEMR,	-- TODO to be replaced with writeback output
+			ALUr		=>  	EX_MEM_OUT_ALUResult, 	-- TODO to be replaced with ALur output from design
 			A		=>      "00",   	-- TODO to be replaced with Forwarding out
 			B		=>      "00",	  	-- TODO to be replaced with forwarding out
 			IMMe		=> 	ID_EX_OUT_IMMe,
@@ -746,6 +762,17 @@ BEGIN
 
 	--END MEMORY STAGE
 --=================================================================================================================================================
+  --Interrupt Handler
+  IntHandler: InterruptHandling
+    port map(
+      INT => EX_MEM_OUT_INT,
+      RST => '0',
+      OPCODE => EX_MEM_OUT_OPCODE,
+      ID_INTS => ID_INTS,
+      EX_INTS => EX_INTS
+    );
+  --End Interrupt Handler
+--=================================================================================================================================================
 	--MEM/WB BUFFER
 	MEM_WB_BUFF: MEM_WB_Buffer
 		port map(
@@ -761,6 +788,7 @@ BEGIN
 			D_WR2		=>	EX_MEM_OUT_WR2,
 		-- OUTPUTS	
 			Q_WB 		=> 	MEM_WB_OUT_WB,
+			Q_MemR		=>	MEM_WB_OUT_MEMR,
 			Q_ALUResult 	=> 	MEM_WB_OUT_ALUr,
 			Q_RD2		=> 	MEM_WB_OUT_RD2,
 			Q_WR1		=> 	MEM_WB_OUT_WR1,

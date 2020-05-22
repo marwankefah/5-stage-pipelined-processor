@@ -8,12 +8,10 @@ PORT(
 		clk,reset,en : IN std_logic;
 		
 		-- INPUTS
-		d_PC:          IN std_logic_vector(31 DOWNTO 0);
+	  d_PC:          IN std_logic_vector(31 DOWNTO 0);
     d_PCnext:      IN std_logic_vector(31 DOWNTO 0);
     d_Instruction: IN std_logic_vector(31 DOWNTO 0);
     d_INPORT:      IN std_logic_vector(31 DOWNTO 0);
-    NOP:           IN std_logic;
-    IF_FLUSH:      IN std_logic;
     d_INT:         IN std_logic;
        
     -- OUTPUTS
@@ -63,19 +61,14 @@ ARCHITECTURE IF_ID_Buffer_Archi OF IF_ID_Buffer IS
 	);
 END COMPONENT;
 
-SIGNAL enB: std_logic;
-SIGNAL InstMUXout: std_logic_vector (31 DOWNTO 0);
-
 	
 BEGIN
- enB <= not(NOP) and not(IF_FLUSH) and en;
- 
- Inst_MUX:    MUX_2x1 generic map(32) port map(d_Instruction,(others => '0'),IF_FLUSH,InstMUXout);
- int_reg:     reg1 port map(clk,reset,enB,d_int,q_int);
- PC_reg:      reg generic map(32) port map(clk,reset,enB,d_PC,q_PC);
- PCnext_reg:  reg generic map(32) port map(clk,reset,enB,d_PCnext,q_PCnext);
- Inst_reg:    reg generic map(32) port map(clk,reset,enB,InstMUXout,q_Instruction); 
- InPort_reg:  reg generic map(32) port map(clk,reset,enB,d_INPORT,q_INPORT);
+
+ int_reg:     reg1 port map(clk,reset,en,d_int,q_int);
+ PC_reg:      reg generic map(32) port map(clk,reset,en,d_PC,q_PC);
+ PCnext_reg:  reg generic map(32) port map(clk,reset,en,d_PCnext,q_PCnext);
+ Inst_reg:    reg generic map(32) port map(clk,reset,en,d_Instruction,q_Instruction); 
+ InPort_reg:  reg generic map(32) port map(clk,reset,en,d_INPORT,q_INPORT);
      
 END IF_ID_Buffer_Archi;  
     

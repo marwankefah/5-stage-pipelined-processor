@@ -17,7 +17,7 @@ end reg;
 
 architecture reg_arch of reg is
 begin
-	process(clk, reset)
+	process(clk)
 	begin
 		if (reset = '1') then 
 			q <= (others=>'0');
