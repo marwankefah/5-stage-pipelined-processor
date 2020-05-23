@@ -301,7 +301,7 @@ Architecture Processor_Archi of Processor IS
 	
 	COMPONENT MEMstage IS
 		PORT (
-        clk:        IN  std_logic;
+       			 clk:        IN  std_logic;
 			--Memory Control Register from previous buffer
 			EX_MEM_MEM:	IN 	std_logic_vector(10 DOWNTO 0);
 			--Data To Store
@@ -317,14 +317,14 @@ Architecture Processor_Archi of Processor IS
 	END COMPONENT;
 	
 	COMPONENT InterruptHandling IS
-    PORT(
-        INT:            in std_logic;
-        RST:            in std_logic;
-        OPCODE:         in std_logic_vector(5 DOWNTO 0); 
-        ID_INTS:        out std_logic_vector(1 DOWNTO 0); 
-        EX_INTS:        out std_logic_vector(1 DOWNTO 0)
-        );
-  END COMPONENT;
+    		PORT(
+        		INT:            in std_logic;
+        		RST:            in std_logic;
+        		OPCODE:         in std_logic_vector(5 DOWNTO 0); 
+        		ID_INTS:        out std_logic_vector(1 DOWNTO 0); 
+        		EX_INTS:        out std_logic_vector(1 DOWNTO 0)
+        	);
+  	END COMPONENT;
 	
 	COMPONENT MEM_WB_Buffer IS
 		PORT( 		 
@@ -438,6 +438,9 @@ Architecture Processor_Archi of Processor IS
 	Signal ID_EX_OUT_RR1 :  	std_logic_vector(2 downto 0);
 	Signal ID_EX_OUT_RR2 :  	std_logic_vector(2 downto 0);
 
+	--ALIASES AS SIGNAL
+	signal ID_EX_OUT_OUTe : std_logic;
+
 	--END OUTPUT OF DECODE/EXECUTE BUFFER
 --=================================================================================================================================================
 	--EXECUTE STAGE OUTPUTS
@@ -473,6 +476,10 @@ Architecture Processor_Archi of Processor IS
 	Signal EX_MEM_OUT_OPCODE:	std_logic_vector(5 downto 0);
 	Signal EX_MEM_OUT_INT:		std_logic;
 
+	--SIGNALS AS ALIASES
+	signal EX_MEM_OUT_WE2R:		std_logic;
+	signal EX_MEM_OUT_WE1R:		std_logic;
+
 	--END EXECUTE/MEMORY BUFFER
 --=================================================================================================================================================
 	--MEMORY STAGE OUTPUTS
@@ -496,12 +503,14 @@ Architecture Processor_Archi of Processor IS
 	signal MEM_WB_OUT_WE1R:		std_logic;
 	signal MEM_WB_OUT_WE2R: 	std_logic;
 	signal MEM_WB_OUT_WDRS:		std_logic;
+	signal MEM_WB_OUT_PCS:		std_logic;
+	signal MEM_WB_OUT_WBS:		std_logic;
 
 	--END MEMORY/WB BUFFER
 --=================================================================================================================================================
-  --Interrupt Control Signals
-  signal ID_INTS: std_logic_vector(1 downto 0);
-  signal EX_INTS: std_logic_vector(1 downto 0);
+  	--Interrupt Control Signals
+  	signal ID_INTS: std_logic_vector(1 downto 0);
+  	signal EX_INTS: std_logic_vector(1 downto 0);
 --=================================================================================================================================================
 	--WRITE BACK STAGE OUTPUTS
 
@@ -513,9 +522,16 @@ Architecture Processor_Archi of Processor IS
   
 BEGIN
 	--ALIASES AS SIGNALS
-	MEM_WB_OUT_WE1R <= MEM_WB_OUT_WB(1);
+	ID_EX_OUT_OUTe <= ID_EX_OUT_EX(10);
+
+	EX_MEM_OUT_WE2R <= EX_MEM_OUT_WB(0);
+	EX_MEM_OUT_WE1R <= EX_MEM_OUT_WB(1);
+
 	MEM_WB_OUT_WE2R <= MEM_WB_OUT_WB(0);
+	MEM_WB_OUT_WE1R <= MEM_WB_OUT_WB(1);	
 	MEM_WB_OUT_WDRS <= MEM_WB_OUT_WB(2);
+	MEM_WB_OUT_PCS <= MEM_WB_OUT_WB(3);
+	MEM_WB_OUT_WBS <= MEM_WB_OUT_WB(4);
 	
 	--FETCH STAGE
 
@@ -526,8 +542,8 @@ BEGIN
 			PCbranch 	=> 	ID_OUT_PCBranch,
 			BranchS 	=> 	ID_OUT_PCBranchS,
 			WB 		=> 	WB_OUT_WB,
-			PCreset 	=> 	Reset, --To Do Hazard Detection Unit
-			PCS 		=> 	MEM_WB_OUT_WB(3),
+			PCreset 	=> 	Reset, 
+			PCS 		=> 	MEM_WB_OUT_PCS,
 			PCen 		=>  	'1', --To Do Hazard Detection Unit
 			CurrentPC 	=> 	IF_OUT_PC,
 			PCnext 		=> 	IF_OUT_PCnext,
@@ -543,8 +559,8 @@ BEGIN
 		port map(
 		  
 			clk		=>	CLK,
-			reset		=>	ID_OUT_IF_flush,
-			en		=>	'1',
+			reset		=>	ID_OUT_IF_flush, -- FLUSHING
+			en		=>	'1',  --To Do Hazard Detection Unit
 			
 			--INPUTS
 			d_PC 		=> 	IF_OUT_PC,
@@ -598,7 +614,7 @@ BEGIN
 			EX_MEM_ALUr 	=>	EX_MEM_OUT_ALUResult,
 	
 			-- FROM FORWARDING UNIT
-			F_C 		=>	FU_C,		--TODO to be replaced with forwarding unit output
+			F_C 		=>	FU_C,		
 			
 			-- FROM EX STAGE
 			CCR		=>	CCR, 
@@ -607,7 +623,7 @@ BEGIN
 			HZ_NOP		=>	'0', 		--TODO to be replaced with hazard_detection_unit output
 	
 			-- FROM INTERRUPT HANDLING UNIT
-			INS_ID 		=>	ID_INTS,		--TODO TO BE REPLACED WITH INT_HANDLING_UNIT OUTPUT 
+			INS_ID 		=>	ID_INTS,		
 	
 	
 			-- OUTPUTS
@@ -697,16 +713,16 @@ BEGIN
 			--EXTERNAL INPUT
 			CLK		=>	CLK,
 			Reset 		=>	Reset, 
-			EX_INTS		=>	EX_INTS,		--TODO TO BE REPLACED WITH INT_HANDLING_UNIT OUTPUT
+			EX_INTS		=>	EX_INTS,		
 			RD1		=> 	ID_EX_OUT_RD1,
 			RD2 		=>  	ID_EX_OUT_RD2,
-			RD12N		=>  	FU_RD1_OUT,	-- TODO to be replaced with Forwarding out
-			RD22N		=>  	FU_RD2_OUT,	-- TODO to be replaced with Forwarding out
-			WB		=>    	WB_OUT_WB,	-- TODO to be replaced with writeback output
+			RD12N		=>  	FU_RD1_OUT,	
+			RD22N		=>  	FU_RD2_OUT,	
+			WB		=>    	WB_OUT_WB,	
 			MEMR =>			MEM_OUT_MEMR,
-			ALUr		=>  	EX_MEM_OUT_ALUResult, 	-- TODO to be replaced with ALur output from design
-			A		=>      FU_A,   	-- TODO to be replaced with Forwarding out
-			B		=>      FU_B,	  	-- TODO to be replaced with forwarding out
+			ALUr		=>  	EX_MEM_OUT_ALUResult, 	
+			A		=>      FU_A,   	
+			B		=>      FU_B,	  	
 			IMMe		=> 	ID_EX_OUT_IMMe,
 			--Control input begin
 			ID_EX_EX	=>	ID_EX_OUT_EX,
@@ -728,7 +744,7 @@ BEGIN
 		port map(
 			clk		=>	clk,
 			reset		=>	reset,
-			en		=>	ID_EX_OUT_EX(10),
+			en		=>	ID_EX_OUT_OUTe,
 			d		=>	EX_ALUResult,
 			q		=>	OUT_PORT
 		);
@@ -738,11 +754,12 @@ BEGIN
 	--Forwarding UNIT
 
 	FU_UNIT : Forwarding_Unit
-		port map(	en=>	'1',  	--TODO ENABLE ="1" to check forwarding unit	  
+		port map(	
+				en	=>	'1',  			-- enable forwarding unit	  
 				ID_EX_RR1 =>	ID_EX_OUT_RR1,   
  				ID_EX_RR2 => 	ID_EX_OUT_RR2,   
 	
-				IF_ID_RR1 => 	ID_OUT_RR1,	--TODO CHECK IF THIS RR1 TO compare (DANIEL)   
+				IF_ID_RR1 => 	ID_OUT_RR1,	
 	
 				ID_EX_INPS=>    ID_EX_OUT_INPS,
 	
@@ -752,11 +769,11 @@ BEGIN
 				MEM_WB_WR1 => 	MEM_WB_OUT_WR1,  
 				MEM_WB_WR2 => 	MEM_WB_OUT_WR2,   
 	
-				EX_MEM_WE1R=>	EX_MEM_OUT_WB(1),	
-				EX_MEM_WE2R=>	EX_MEM_OUT_WB(0),  
+				EX_MEM_WE1R=>	EX_MEM_OUT_WE1R,	
+				EX_MEM_WE2R=>	EX_MEM_OUT_WE2R,  
 	
-				MEM_WB_WE1R=>	MEM_WB_OUT_WB(1),  	
-				MEM_WB_WE2R=>	MEM_WB_OUT_WB(0),  
+				MEM_WB_WE1R=>	MEM_WB_OUT_WE1R,  	
+				MEM_WB_WE2R=>	MEM_WB_OUT_WE2R,  
 	
 	
 				EX_MEM_RD2=>	EX_MEM_OUT_RD2,
@@ -767,7 +784,7 @@ BEGIN
 				A=> 		FU_A,
 				B=>		FU_B,
 				C=>   		FU_C
-						);
+			);
 
 	--END FORWARDING UNIT
 --=================================================================================================================================================
@@ -778,7 +795,7 @@ BEGIN
 		PORT MAP( 		 
 			Clk		=>	CLK,
 			Rst		=>	Reset,
-			en 		=>	'1',   		-- TODO UNDERSTAND
+			en 		=>	'1',   		
 			--BEGIN INPUT_BUFFER
 			--WB CONTROL PROPAGATION
 			D_WB 		=> 	EX_OUT_WB,
@@ -851,16 +868,16 @@ BEGIN
 
 	--END MEMORY STAGE
 --=================================================================================================================================================
-  --Interrupt Handler
-  IntHandler: InterruptHandling
-    port map(
-      INT => EX_MEM_OUT_INT,
-      RST => '0',
-      OPCODE => EX_MEM_OUT_OPCODE,
-      ID_INTS => ID_INTS,
-      EX_INTS => EX_INTS
-    );
-  --End Interrupt Handler
+  	--Interrupt Handler
+  	IntHandler: InterruptHandling
+  	  	port map(
+  	    		INT => EX_MEM_OUT_INT,
+  	    		RST => '0',	
+  	    		OPCODE => EX_MEM_OUT_OPCODE,
+  	    		ID_INTS => ID_INTS,
+  	    		EX_INTS => EX_INTS
+  	  		);	
+  	--End Interrupt Handler
 --=================================================================================================================================================
 	--MEM/WB BUFFER
 	MEM_WB_BUFF: MEM_WB_Buffer
@@ -887,7 +904,7 @@ BEGIN
 --=================================================================================================================================================
 	--WRITE BACK STAGE
 
-	WB_Stage_MUX : MUX_2x1 generic map(32) port map(MEM_WB_OUT_ALUr,MEM_WB_OUT_MEMR,MEM_WB_OUT_WB(4),WB_OUT_WB);
+	WB_Stage_MUX : MUX_2x1 generic map(32) port map(MEM_WB_OUT_ALUr,MEM_WB_OUT_MEMR,MEM_WB_OUT_WBS,WB_OUT_WB);
 
 	--END WRITE BACK STAGE 
 
