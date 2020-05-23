@@ -15,10 +15,10 @@ architecture reg1_arch of reg1 is
 begin
 	process(clk)
 	begin
-		if (reset = '1') then 
-			q <= '0';
-		elsif rising_edge(clk) then
-			if (en = '1') then
+		if (rising_edge(clk)) then
+			if (reset = '1') then
+				q <= '0';
+			elsif (en = '1') then
 				q <= d;
 			end if;
 		end if;
