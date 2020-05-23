@@ -22,10 +22,10 @@ signal register_sig: std_logic_vector(3 downto 0);
 begin
 	process(clk)
 	begin
-		if (rising_edge(clk)) then
-			if (reset = '1') then
-				Q_CCR <= (others=>'0');
-			elsif (enF = '1') then
+		if (reset = '1') then 
+			Q_CCR <= (others=>'0');
+		elsif rising_edge(clk) then
+			if(enF='1') then
 				if(clF='1') then
 					Q_CCR <= (others=>'0');
 				elsif(stC='1') then
@@ -39,7 +39,9 @@ begin
 				else 
 					Q_CCR<=D_CCR;
 				end if;
+					
 			end if;
+		
 		end if;
 	end process;
 
