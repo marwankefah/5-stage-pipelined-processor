@@ -117,7 +117,7 @@ ARCHITECTURE MEMstageArchi OF MEMstage IS
 		--Multiplexers to detemrine data and address
 		u_SP:		SPunit 	PORT MAP(clk,SPS,SP2,a_SP,a_SPp2,a_SPm2);
 		addrMUX: 	MUX_4x1 GENERIC MAP (32) PORT MAP(a_SP,a_SPm2,intMUXout,EAe,DAS,addrMUXout);
-		intMUX: 	MUX_4x1 GENERIC MAP (32) PORT MAP(std_logic_vector(to_unsigned(0,32)),std_logic_vector(to_unsigned(2,32)),a_SPm2,a_SPm2,INTCTRL,intMUXout);
+		intMUX: 	MUX_4x1 GENERIC MAP (32) PORT MAP(std_logic_vector(to_unsigned(0,32)),std_logic_vector(to_unsigned(2,32)),a_SPp2,a_SPp2,INTCTRL,intMUXout);
 		dataMUX:	MUX_4x1 GENERIC MAP (32) PORT MAP(ALUResult,q_PC,PCnext,q_CCR,WDS,dataMUXout);
 		--Main Data Memory Module
 		datamem:	DataMemory PORT MAP(addrMUXout,dataMUXout,RD,MW,MR,clk);

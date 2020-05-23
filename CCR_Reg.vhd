@@ -8,6 +8,8 @@ entity CCR_Reg is
 		   enF : in std_logic;
 		   stC:  in std_logic;
 		   clC:  in std_logic;
+		   clZ:  in std_logic;
+		   clN:  in std_logic;
 		   clF:	 in std_logic;
 		   D_CCR : in std_logic_vector(3 downto 0);
 		   Q_CCR : out std_logic_vector(3 downto 0)
@@ -30,6 +32,10 @@ begin
 					Q_CCR(2)<='1';
 				elsif(clC='1')  then
 					Q_CCR(2)<='0';
+				elsif(clN='1') then
+				  Q_CCR(1)<='0';
+				elsif(clZ='1') then
+				  Q_CCR(0)<='0';
 				else 
 					Q_CCR<=D_CCR;
 				end if;

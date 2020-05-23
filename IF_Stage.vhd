@@ -5,13 +5,13 @@ use ieee.numeric_std.all;
 
 ENTITY IF_Stage IS
 PORT (
+	   clk:        IN std_logic;
        PCbranch:   IN std_logic_vector(31 downto 0);
        BranchS:    IN std_logic;
        WB:         IN std_logic_vector(31 downto 0);
        PCreset:    IN std_logic;
        PCS:        IN std_logic;
        PCen:       IN std_logic;
-       clk:        IN std_logic;
        CurrentPC:  OUT std_logic_vector(31 downto 0);
        PCnext:     OUT std_logic_vector(31 downto 0);
        Instruction:OUT std_logic_vector(31 downto 0) 
