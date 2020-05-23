@@ -6,7 +6,8 @@ entity control_unit is
 		opcode : in std_logic_vector(5 downto 0);
 		int : in std_logic;
 		rst : in std_logic;
-		cntrl_sig : out std_logic_vector(34 downto 0)
+		cntrl_sig : out std_logic_vector(34 downto 0);
+		IF_flush : out std_logic
 	);
 end control_unit;
 
@@ -74,8 +75,10 @@ begin
 			      "00000000000000000000101000101011000" when RTI_OP,	
 			      "00000000000000000000100000000000000" when others;
 			
-	cntrl_sig <= 
-	          "00000000000000001100000000101011000" when rst = '1' else
-		        "00000000000000000000100100101011000" when int = '1' else
-		     op_signals;		
+	cntrl_sig <= "00000000000000001100000000101011000" when rst = '1' else
+		     "00000000000000000000100100101011000" when int = '1' else
+		     op_signals;
+
+	IF_flush <= '1' when (int = '1' or rst = '1' or opcode = CALL_OP or opcode = RET_OP or opcode = RTI_OP) else
+		    '0';		
 end control_unit_arch;

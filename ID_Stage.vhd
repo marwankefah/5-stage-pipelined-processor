@@ -69,7 +69,10 @@ entity ID_Stage is
 
 		-- SELECTOR AND VALUE TO FETCH STAGE
 		PCBranch : out std_logic_vector(31 downto 0);
-		PCBranchS : out std_logic
+		PCBranchS : out std_logic;
+
+		-- FLUSHING
+		IF_flush : out std_logic
 	);
 end ID_Stage;
 
@@ -79,7 +82,8 @@ architecture ID_Stage_arch of ID_Stage is
 			opcode : in std_logic_vector(5 downto 0);
 			int : in std_logic;
 			rst : in std_logic;
-			cntrl_sig : out std_logic_vector(34 downto 0)
+			cntrl_sig : out std_logic_vector(34 downto 0);
+			IF_flush : out std_logic
 		);
 	end component;
 
@@ -147,6 +151,7 @@ architecture ID_Stage_arch of ID_Stage is
 	signal branch_RD1 : std_logic_vector(31 downto 0);
 	signal select_with_flag : std_logic;
 	signal jump_PC : std_logic_vector(31 downto 0);
+	signal cntrl_IF_flush : std_logic;
 
 
 	-- ALIASES AS SIGNALS
@@ -179,7 +184,7 @@ begin
 	c_next_signals <= cntrl_signals(28 downto 0);
 
 	-- CONTROL UNIT
-	ControlUNIT : control_unit port map(instr_opcode,int,rst_in,cntrl_signals);
+	ControlUNIT : control_unit port map(instr_opcode,int,rst_in,cntrl_signals,cntrl_IF_flush);
 
 	-- CONTROL SIGNALS
 	control_mux1 : MUX_2x1 generic map(29) port map(c_next_signals,ZERO,HZ_NOP,next_signals_stall);
@@ -215,6 +220,9 @@ begin
 	Branch_MUX1 : MUX_2x1 generic map(32) port map(PCnext,branch_RD1,select_with_flag,jump_PC); 
 	Branch_MUX2 : MUX_2x1 generic map(32) port map(jump_PC,branch_RD1,c_CALL,PCBranch);
 	PCBranchS <= (c_CALL or select_with_flag);	
+	
+	-- FLUSHING
+	IF_flush <= cntrl_IF_flush or c_CALL or select_with_flag;
 
 end ID_Stage_arch;
 
