@@ -190,7 +190,8 @@ Architecture Processor_Archi of Processor IS
 			RD1: 		IN std_logic_vector(31 DOWNTO 0);
  			RD2 : 		IN std_logic_vector(31 DOWNTO 0);
 			--RD2 comming from memory stage
-			RD2N: 		IN std_logic_vector(31 DOWNTO 0);
+			RD12N: 		IN std_logic_vector(31 DOWNTO 0);
+			RD22N: 		IN std_logic_vector(31 DOWNTO 0);
 			WB:   		IN std_logic_vector(31 DOWNTO 0);
 			MEMR:		IN std_logic_vector(31 DOWNTO 0);
 			ALUr: 		IN std_logic_vector(31 DOWNTO 0);
@@ -692,7 +693,8 @@ BEGIN
 			EX_INTS		=>	EX_INTS,		--TODO TO BE REPLACED WITH INT_HANDLING_UNIT OUTPUT
 			RD1		=> 	ID_EX_OUT_RD1,
 			RD2 		=>  	ID_EX_OUT_RD2,
-			RD2N		=>  	ID_EX_OUT_RD2,	-- TODO to be replaced with Forwarding out
+			RD12N		=>  	FU_RD1_OUT,	-- TODO to be replaced with Forwarding out
+			RD22N		=>  	FU_RD2_OUT,	-- TODO to be replaced with Forwarding out
 			WB		=>    	WB_OUT_WB,	-- TODO to be replaced with writeback output
 			MEMR =>			MEM_OUT_MEMR,
 			ALUr		=>  	EX_MEM_OUT_ALUResult, 	-- TODO to be replaced with ALur output from design
@@ -729,8 +731,7 @@ BEGIN
 	--Forwarding UNIT
 
 	FU_UNIT : Forwarding_Unit
-		port map(	
-		    en=>	'1',  	--TODO ENABLE ="1" to check forwarding unit	  
+		port map(	en=>	'1',  	--TODO ENABLE ="1" to check forwarding unit	  
 				ID_EX_RR1 =>	ID_EX_OUT_RR1,   
  				ID_EX_RR2 => 	ID_EX_OUT_RR2,   
 	
@@ -756,13 +757,14 @@ BEGIN
 
 				RD2N1=> 	FU_RD1_OUT,	  
 				RD2N2=> 	FU_RD2_OUT,	  
-				A=> 	FU_A,
+				A=> 		FU_A,
 				B=>		FU_B,
-				C=>  FU_C
-				);
+				C=>   		FU_C
+						);
 
 	--END FORWARDING UNIT
 --=================================================================================================================================================
+
 	--EXECUTE/MEM  BUFFER
 
 	EX_MEM_BUFF: EX_MEM_Buffer

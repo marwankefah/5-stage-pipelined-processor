@@ -15,7 +15,8 @@ PORT (	--EXTERNAL INPUT
 	RD1:  IN std_logic_vector(31 DOWNTO 0);
  	RD2 : IN std_logic_vector(31 DOWNTO 0);
 	--RD2 comming from memory stage
-	RD2N: IN std_logic_vector(31 DOWNTO 0);
+	RD12N: IN std_logic_vector(31 DOWNTO 0);
+	RD22N: IN std_logic_vector(31 DOWNTO 0);
 	WB:   IN std_logic_vector(31 DOWNTO 0);
 	MEMR: IN std_logic_vector(31 DOWNTO 0);
 	ALUr: IN std_logic_vector(31 DOWNTO 0);
@@ -129,7 +130,7 @@ OP2SMux: MUX_4x1 generic map(32) port map (
 
 Amux: MUX_4x1 generic map(32) port map (
 					in3 => WB, 
-					in2 => RD2N ,
+					in2 => RD12N ,
 					in1 => ALUr , 
 					in0 => RD1,
 					sel => A,
@@ -137,7 +138,7 @@ Amux: MUX_4x1 generic map(32) port map (
 						);
 Bmux: MUX_4x1 generic map(32) port map (
 					in3 => WB, 
-					in2 => RD2N ,
+					in2 => RD22N ,
 					in1 => ALUr , 
 					in0 => OP2SMux_BMux,
 					sel => B,
