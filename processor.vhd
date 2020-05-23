@@ -543,8 +543,8 @@ BEGIN
 		port map(
 		  
 			clk		=>	CLK,
-			reset		=>	Reset,
-			en		=>	ID_OUT_IF_flush,
+			reset		=>	ID_OUT_IF_flush,
+			en		=>	'1',
 			
 			--INPUTS
 			d_PC 		=> 	IF_OUT_PC,
