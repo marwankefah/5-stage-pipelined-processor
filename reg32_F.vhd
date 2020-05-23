@@ -15,12 +15,12 @@ architecture reg32_F_arch of reg32_F is
 begin
 	process(clk)
 	begin
-		if (reset = '1') then 
-			q <= (others=>'0');
-		elsif falling_edge(clk) then
-			if (en = '1') then
+		if falling_edge(clk) then
+			if (reset = '1') then
+				q <= (others=>'0');
+			elsif (en = '1') then
 				q <= d;
-			end if;
+			end if;		
 		end if;
 	end process;
 end reg32_F_arch;
