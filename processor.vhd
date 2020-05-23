@@ -135,7 +135,10 @@ Architecture Processor_Archi of Processor IS
 	
 			-- SELECTOR AND VALUE TO FETCH STAGE
 			PCBranch : out std_logic_vector(31 downto 0);
-			PCBranchS : out std_logic
+			PCBranchS : out std_logic;
+
+			-- FLUSHING
+			IF_flush : out std_logic
 		);
 	end component;
 
@@ -412,6 +415,7 @@ Architecture Processor_Archi of Processor IS
 	signal ID_OUT_CALL :		std_logic;
 	signal ID_OUT_PCBranch : 	std_logic_vector(31 downto 0);
 	signal ID_OUT_PCBranchS : 	std_logic;
+	signal ID_OUT_IF_flush : 	std_logic;
 	
 	--END DECODE STAGE OUTPUTS
 --=================================================================================================================================================
@@ -522,9 +526,9 @@ BEGIN
 			PCbranch 	=> 	ID_OUT_PCBranch,
 			BranchS 	=> 	ID_OUT_PCBranchS,
 			WB 		=> 	WB_OUT_WB,
-			PCreset => Reset, --To Do Hazard Detection Unit
+			PCreset 	=> 	Reset, --To Do Hazard Detection Unit
 			PCS 		=> 	MEM_WB_OUT_WB(3),
-			PCen =>  '1', --To Do Hazard Detection Unit
+			PCen 		=>  	'1', --To Do Hazard Detection Unit
 			CurrentPC 	=> 	IF_OUT_PC,
 			PCnext 		=> 	IF_OUT_PCnext,
 			Instruction 	=> 	IF_OUT_instr
@@ -540,7 +544,7 @@ BEGIN
 		  
 			clk		=>	CLK,
 			reset		=>	Reset,
-			en		=>	'1', --To DO Hazard Detection Unit
+			en		=>	ID_OUT_IF_flush,
 			
 			--INPUTS
 			d_PC 		=> 	IF_OUT_PC,
@@ -631,7 +635,10 @@ BEGIN
 	
 			-- SELECTOR AND VALUE TO FETCH STAGE
 			PCBranch 	=>	ID_OUT_PCBranch,
-			PCBranchS 	=>	ID_OUT_PCBranchS
+			PCBranchS 	=>	ID_OUT_PCBranchS,
+
+			-- FLUSHING
+			IF_flush 	=> 	ID_OUT_IF_flush 
 		);
 
 	--END DECODE STAGE
