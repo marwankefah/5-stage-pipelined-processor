@@ -142,6 +142,31 @@ Architecture Processor_Archi of Processor IS
 		);
 	end component;
 
+	component hazard_detection_unit is
+		port(		
+			enable : in std_logic;
+			clk : in std_logic;
+		
+			-- CONTROL SIGNALS
+			ID_IF_flush : std_logic;
+			ID_EX_MR : in std_logic;
+			ID_EX_enF : in std_logic;
+			PCBranchS : in std_logic;
+			ID_EX_WE1R : in std_logic;
+	
+			-- ADDRESSES
+			ID_RR1 : in std_logic_vector(2 downto 0);
+			ID_RR2 : in std_logic_vector(2 downto 0);		
+			ID_EX_WR1 : in std_logic_vector(2 downto 0);
+			ID_EX_WR2 : in std_logic_vector(2 downto 0);
+	
+			-- OUTPUTS
+			NOPs : out std_logic;
+			enable_PC : out std_logic;
+			enable_IF_ID_buffer : out std_logic
+		);
+	end component;
+
 	component ID_EX_Buffer is
 		port(
 			clk, reset, en : std_logic;
@@ -419,6 +444,14 @@ Architecture Processor_Archi of Processor IS
 	
 	--END DECODE STAGE OUTPUTS
 --=================================================================================================================================================
+	--HAZARD DETECTION UNIT OUTPUTS
+
+	signal HZD_NOPs:		std_logic;
+	signal HZD_enable_PC:		std_logic;
+	signal HZD_enable_IF_ID_buffer:	std_logic;
+
+	--END HAZARD DETECTION UNIT OUPUTS
+--=================================================================================================================================================
 	--OUTPUT OF DECODE/EXECUTE BUFFER
 
 	Signal ID_EX_OUT_WB : 		std_logic_vector(4 downto 0);
@@ -439,7 +472,10 @@ Architecture Processor_Archi of Processor IS
 	Signal ID_EX_OUT_RR2 :  	std_logic_vector(2 downto 0);
 
 	--ALIASES AS SIGNAL
-	signal ID_EX_OUT_OUTe : std_logic;
+	signal ID_EX_OUT_OUTe : 	std_logic;
+	signal ID_EX_OUT_MR :		std_logic;
+	signal ID_EX_OUT_enF : 		std_logic;
+	signal ID_EX_OUT_WE1R : 	std_logic;
 
 	--END OUTPUT OF DECODE/EXECUTE BUFFER
 --=================================================================================================================================================
@@ -522,7 +558,10 @@ Architecture Processor_Archi of Processor IS
   
 BEGIN
 	--ALIASES AS SIGNALS
+	ID_EX_OUT_WE1R <= ID_EX_OUT_WB(1);
+	ID_EX_OUT_enF <= ID_EX_OUT_EX(1);
 	ID_EX_OUT_OUTe <= ID_EX_OUT_EX(10);
+	ID_EX_OUT_MR <= ID_EX_OUT_MEM(1);
 
 	EX_MEM_OUT_WE2R <= EX_MEM_OUT_WB(0);
 	EX_MEM_OUT_WE1R <= EX_MEM_OUT_WB(1);
@@ -658,6 +697,34 @@ BEGIN
 		);
 
 	--END DECODE STAGE
+--=================================================================================================================================================
+	--HAZARD DETECTION UNIT
+	
+	HZD : hazard_detection_unit
+		port map(
+			enable 		=>	'1',
+			clk 		=>	clk,
+	
+			-- CONTROL SIGNALS
+			ID_IF_flush 	=>	ID_OUT_IF_flush,
+			ID_EX_MR 	=>	ID_EX_OUT_MR,
+			ID_EX_enF	=>	ID_EX_OUT_enF,
+			PCBranchS	=>	ID_OUT_PCBranchS,
+			ID_EX_WE1R	=>	ID_EX_OUT_WE1R,
+
+			-- ADDRESSES
+			ID_RR1 		=>	ID_OUT_RR1,
+			ID_RR2 		=>	ID_OUT_RR2,
+			ID_EX_WR1  	=>	ID_EX_OUT_WR1,
+			ID_EX_WR2  	=>	ID_EX_OUT_WR2, 
+	
+			-- OUTPUTS
+			NOPs 		=>	HZD_NOPs,
+			enable_PC 	=>	HZD_enable_PC,
+			enable_IF_ID_buffer =>	HZD_enable_IF_ID_buffer
+		);	
+
+	--END HAZARD DETECTION UNIT
 --=================================================================================================================================================
 	--DECODE/EXECUTE BUFFER
 
