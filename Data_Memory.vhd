@@ -26,7 +26,7 @@ ARCHITECTURE DataMemArchi OF DataMemory IS
 	GENERIC(
 	  DataWidth    : INTEGER := 16;
 	  AddressWidth : INTEGER := 32;
-	  AddressSpace : INTEGER := 99 --(2^31-1)
+	  AddressSpace : INTEGER := 2047 
 	  );
 	PORT(
 		clk     : IN  std_logic;

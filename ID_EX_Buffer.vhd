@@ -8,7 +8,7 @@ entity ID_EX_Buffer is
 		-- INPUTS 
 		D_WB : 		in std_logic_vector(4 downto 0);
 		D_MEM : 	in std_logic_vector(10 downto 0);
-		D_EX : 		in std_logic_vector(10 downto 0);
+		D_EX : 		in std_logic_vector(12 downto 0);
 		D_opcode : 	in std_logic_vector(5 downto 0);
 		D_INPS : 	in std_logic_vector(1 downto 0);
 		D_int : 	in std_logic;
@@ -26,7 +26,7 @@ entity ID_EX_Buffer is
 		-- OUTPUTS
 		Q_WB : 		out std_logic_vector(4 downto 0);
 		Q_MEM : 	out std_logic_vector(10 downto 0);
-		Q_EX : 		out std_logic_vector(10 downto 0);
+		Q_EX : 		out std_logic_vector(12 downto 0);
 		Q_opcode : 	out std_logic_vector(5 downto 0);
 		Q_INPS : 	out std_logic_vector(1 downto 0);
 		Q_int : 	out std_logic;
@@ -70,7 +70,7 @@ architecture ID_EX_Buffer_arch of ID_EX_Buffer is
 begin
 	WB_reg : reg generic map(5) port map(clk,reset,en,D_WB,Q_WB);
 	MEM_reg : reg generic map(11) port map(clk,reset,en,D_MEM,Q_MEM);
-	EX_reg : reg generic map(11) port map(clk,reset,en,D_EX,Q_EX);
+	EX_reg : reg generic map(13) port map(clk,reset,en,D_EX,Q_EX);
 	opcode_reg : reg generic map(6) port map(clk,reset,en,D_opcode,Q_opcode);
 	INPS_reg : reg generic map(2) port map(clk,reset,en,D_INPS,Q_INPS);
 	int_reg : reg1 port map(clk,reset,en,D_int,Q_int);
