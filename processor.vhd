@@ -731,44 +731,7 @@ BEGIN
 	--Forwarding UNIT
 
 	FU_UNIT : Forwarding_Unit
-		port map(	
-		    en=>	'1',  	--TODO ENABLE ="1" to check forwarding unit	  
-				ID_EX_RR1 =>	ID_EX_OUT_RR1,   
- 				ID_EX_RR2 => 	ID_EX_OUT_RR2,   
-	
-				IF_ID_RR1 => 	ID_OUT_RR1,	--TODO CHECK IF THIS RR1 TO compare (DANIEL)   
-	
-				ID_EX_INPS=>    ID_EX_OUT_INPS,
-	
-				EX_MEM_WR1 => 	EX_MEM_OUT_WR1,  
-				EX_MEM_WR2 => 	EX_MEM_OUT_WR2,   
-	
-				MEM_WB_WR1 => 	MEM_WB_OUT_WR1,  
-				MEM_WB_WR2 => 	MEM_WB_OUT_WR2,   
-	
-				EX_MEM_WE1R=>	EX_MEM_OUT_WB(1),	
-				EX_MEM_WE2R=>	EX_MEM_OUT_WB(0),  
-	
-				MEM_WB_WE1R=>	MEM_WB_OUT_WB(1),  	
-				MEM_WB_WE2R=>	MEM_WB_OUT_WB(0),  
-	
-	
-				EX_MEM_RD2=>	EX_MEM_OUT_RD2,
-				MEM_WB_RD2=>	MEM_WB_OUT_RD2,  
-
-				RD2N1=> 	FU_RD1_OUT,	  
-				RD2N2=> 	FU_RD2_OUT,	  
-				A=> 	FU_A,
-				B=>		FU_B,
-				C=>  FU_C
-				);
-
-	--END FORWARDING UNIT
---=================================================================================================================================================
-	--Forwarding UNIT
-
-	FU_UNIT : Forwarding_Unit
-		port map(	en=>	'0',  	--TODO ENABLE ="1" to check forwarding unit	  
+		port map(	en=>	'1',  	--TODO ENABLE ="1" to check forwarding unit	  
 				ID_EX_RR1 =>	ID_EX_OUT_RR1,   
  				ID_EX_RR2 => 	ID_EX_OUT_RR2,   
 	
@@ -801,6 +764,7 @@ BEGIN
 
 	--END FORWARDING UNIT
 --=================================================================================================================================================
+
 	--EXECUTE/MEM  BUFFER
 
 	EX_MEM_BUFF: EX_MEM_Buffer
