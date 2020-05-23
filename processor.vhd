@@ -362,37 +362,6 @@ Architecture Processor_Archi of Processor IS
 		);
 	END COMPONENT;
 	
-	COMPONENT Forwarding_Unit IS
-		PORT (	en:		IN std_logic;
-			ID_EX_RR1 :	IN std_logic_vector (2 DOWNTO 0);
-			ID_EX_RR2 : 	IN std_logic_vector (2 DOWNTO 0) ;
-			
-			IF_ID_RR1 : 	IN std_logic_vector (2 DOWNTO 0);
-			
-			ID_EX_INPS: 	IN std_logic_vector (1 DOWNTO 0);
-			
-			EX_MEM_WR1 : 	IN std_logic_vector (2 DOWNTO 0);
-			EX_MEM_WR2 : 	IN std_logic_vector (2 DOWNTO 0);
-			
-			MEM_WB_WR1 : 	IN std_logic_vector (2 DOWNTO 0);
-			MEM_WB_WR2 : 	IN std_logic_vector (2 DOWNTO 0);
-			
-			EX_MEM_WE1R:	IN std_logic;	
-			EX_MEM_WE2R:	IN std_logic;
-			
-			MEM_WB_WE1R:	IN std_logic;	
-			MEM_WB_WE2R:	IN std_logic;
-			
-			
-			EX_MEM_RD2:	IN std_logic_vector (31 DOWNTO 0);
-			MEM_WB_RD2:	IN std_logic_vector (31 DOWNTO 0);
-
-			RD2N1: 		OUT std_logic_vector(31 DOWNTO 0);
-			RD2N2: 		OUT std_logic_vector(31 DOWNTO 0);
-			A,B,C : 	OUT std_logic_vector(1  DOWNTO 0));   
-		
-		END COMPONENT;
-		
 	COMPONENT MUX_2x1 IS
 		generic(
 			n : integer
