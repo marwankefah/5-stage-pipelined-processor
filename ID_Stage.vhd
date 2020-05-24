@@ -136,7 +136,7 @@ architecture ID_Stage_arch of ID_Stage is
 	END component;
 
 	-- CONSTANTS
-	constant ZERO : std_logic_vector(28 downto 0)    := "00000000000000000000000000000";
+	constant ZERO : std_logic_vector(28 downto 0)    := "00000000000000100000000000000";
 	constant PUSHF : std_logic_vector(28 downto 0)   := "00000000000001100011010100000";
 	constant RestoreF: std_logic_vector(28 downto 0) := "00000000000110100000000000000";
 
