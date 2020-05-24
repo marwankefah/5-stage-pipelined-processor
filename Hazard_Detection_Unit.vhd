@@ -6,9 +6,11 @@ entity hazard_detection_unit is
 	port(		
 		enable : in std_logic;
 		clk : in std_logic;
+		int : in std_logic;
+		rst : in std_logic;
+		opcode : in std_logic_vector(5 downto 0);
 	
 		-- CONTROL SIGNALS
-		ID_IF_flush : std_logic;
 		ID_EX_MR : in std_logic;
 		ID_EX_enF : in std_logic;
 		PCBranchS : in std_logic;
@@ -30,6 +32,11 @@ end hazard_detection_unit;
 architecture harzard_detection_unit_arch of hazard_detection_unit is 
 	signal counterFlush : unsigned(2 downto 0) := "000";
 	signal counterStall : unsigned(2 downto 0) := "000";
+
+	--CONSTANTS
+	constant CALL_OP : std_logic_vector(5 downto 0) := "011100";
+	constant RET_OP : std_logic_vector(5 downto 0) := "011101";
+	constant RTI_OP : std_logic_vector(5 downto 0) := "011110";
 begin
 	process (clk)
 	begin
@@ -45,7 +52,7 @@ begin
 					enable_PC <= '0';
 					enable_IF_ID_buffer <= '0';
 					counterStall <= counterStall - "001";
-				elsif (ID_IF_flush = '1') then -- RST CAL RET INT RTI
+				elsif (int = '1' or rst = '1' or opcode = CALL_OP or opcode = RET_OP or opcode = RTI_OP) then -- RST CAL RET INT RTI
 					counterFlush <= "100";	
 				elsif (ID_EX_MR = '1' and ID_EX_WE1R = '1' and PCBranchS = '1' and ID_RR1 = ID_EX_WR1) then -- LOAD USE CASE (JUMP OPERATIONS)
 					NOPs <= '1';
