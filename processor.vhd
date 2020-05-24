@@ -583,7 +583,7 @@ BEGIN
 			WB 		=> 	WB_OUT_WB,
 			PCreset 	=> 	Reset, 
 			PCS 		=> 	MEM_WB_OUT_PCS,
-			PCen 		=>  	'1', --To Do Hazard Detection Unit
+			PCen 		=>  	HZD_enable_PC, --To Do Hazard Detection Unit
 			CurrentPC 	=> 	IF_OUT_PC,
 			PCnext 		=> 	IF_OUT_PCnext,
 			Instruction 	=> 	IF_OUT_instr
@@ -599,7 +599,7 @@ BEGIN
 		  
 			clk		=>	CLK,
 			reset		=>	ID_OUT_IF_flush, -- FLUSHING
-			en		=>	'1',  --To Do Hazard Detection Unit
+			en		=>	HZD_enable_IF_ID_buffer,  --To Do Hazard Detection Unit
 			
 			--INPUTS
 			d_PC 		=> 	IF_OUT_PC,
@@ -659,7 +659,7 @@ BEGIN
 			CCR		=>	CCR, 
 		
 			-- FROM HAZARD DETECTION UNIT
-			HZ_NOP		=>	'0', 		--TODO to be replaced with hazard_detection_unit output
+			HZ_NOP		=>	HZD_NOPs, 		--TODO to be replaced with hazard_detection_unit output
 	
 			-- FROM INTERRUPT HANDLING UNIT
 			INS_ID 		=>	ID_INTS,		
