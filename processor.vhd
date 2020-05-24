@@ -146,9 +146,11 @@ Architecture Processor_Archi of Processor IS
 		port(		
 			enable : in std_logic;
 			clk : in std_logic;
-		
+			int : in std_logic;
+			rst : in std_logic;
+			opcode : in std_logic_vector(5 downto 0);
+			
 			-- CONTROL SIGNALS
-			ID_IF_flush : std_logic;
 			ID_EX_MR : in std_logic;
 			ID_EX_enF : in std_logic;
 			PCBranchS : in std_logic;
@@ -703,10 +705,12 @@ BEGIN
 	HZD : hazard_detection_unit
 		port map(
 			enable 		=>	'1',
-			clk 		=>	clk,
+			clk 		=>	CLK,
+			int		=>	INTR_IN,
+			rst 		=>	Reset,
+			opcode		=>	ID_OUT_opcode,
 	
 			-- CONTROL SIGNALS
-			ID_IF_flush 	=>	ID_OUT_IF_flush,
 			ID_EX_MR 	=>	ID_EX_OUT_MR,
 			ID_EX_enF	=>	ID_EX_OUT_enF,
 			PCBranchS	=>	ID_OUT_PCBranchS,
