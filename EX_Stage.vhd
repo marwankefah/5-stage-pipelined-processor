@@ -98,6 +98,7 @@ signal flagSelecExtend:std_logic_vector(1 DOWNTO 0);
 
 constant PUSHPC : std_logic_vector(15 downto 0) := "1100001010100000";                                                             
 constant POPF : std_logic_vector(15 downto 0)   := "0010000001010000";
+constant NOP : std_logic_vector(15 downto 0)    := "0100000000000000";
 
 Begin
 
