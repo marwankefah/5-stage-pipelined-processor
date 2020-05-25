@@ -42,6 +42,7 @@ COMPONENT CCR_Reg is
 	port(
 		   clk : in std_logic;
 		   reset : in std_logic;
+		   RTIen : in std_logic;
 		   enF : in std_logic;
 		   stC:  in std_logic;
 		   clC:  in std_logic;
@@ -79,10 +80,10 @@ COMPONENT MUX_4x1 IS
 END COMPONENT;
 COMPONENT ALU IS
 PORT (  
-  en:IN std_logic;
+  prevC: IN std_logic;
   inA:IN std_logic_vector(31 DOWNTO 0);
  	inB : IN std_logic_vector(31 DOWNTO 0) ;
-	sel: in std_logic_vector (2 DOWNTO 0);
+	sel: IN std_logic_vector (2 DOWNTO 0);
 	ALUOut: OUT std_logic_vector(31 DOWNTO 0);
 	CCR : OUT std_logic_vector(3 DOWNTO 0));
 END COMPONENT;
@@ -94,6 +95,7 @@ signal CCROut_ALU: std_logic_vector(3 DOWNTO 0);
 -- flags only take the last 3 least signifcant bits
 signal flagsMuxOut:std_logic_vector(3 DOWNTO 0);
 signal flagSelecExtend:std_logic_vector(1 DOWNTO 0);
+signal CCROut_reg: std_logic_vector(3 DOWNTO 0);
 
 
 constant PUSHPC : std_logic_vector(15 downto 0) := "1100001010100000";                                                             
@@ -146,7 +148,7 @@ Bmux: MUX_4x1 generic map(32) port map (
 					outm=> BmuxOut
 						);
 ALU_instance: ALU 	port map(
-          en     =>ID_EX_EX(1),
+          prevC  =>CCROut_reg(2),
 					inA    =>AmuxOut,
 					inB    =>BmuxOut,
 					sel    =>ID_EX_EX(9 DOWNTO 7),  --ALUOP
@@ -165,6 +167,7 @@ FlagsMux: MUX_2x1 generic map(4) port map (
 CCR_REG_EX: CCR_Reg		 port map (
 					clk =>clk,
 		   			reset => reset,
+		   			RTIen => ID_EX_EX(0),
 		   			stC=> ID_EX_EX(6),
 		   			clC=> ID_EX_EX(5),
 		   			clZ=> ID_EX_EX(4),
@@ -172,8 +175,10 @@ CCR_REG_EX: CCR_Reg		 port map (
 		   			clF=> ID_EX_EX(2),
 					enF =>ID_EX_EX(1),
 		   			D_CCR=>flagsMuxOut,
-		   			Q_CCR=>CCR
+		   			Q_CCR=>CCROut_reg
 					);
+					
+CCR <= CCROut_reg;
 END Execute_Stage_Archi;
 
 
