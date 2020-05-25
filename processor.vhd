@@ -567,7 +567,7 @@ BEGIN
 	--ALIASES AS SIGNALS
 	ID_EX_OUT_WE1R <= ID_EX_OUT_WB(1);
 	ID_EX_OUT_enF <= ID_EX_OUT_EX(1);
-	ID_EX_OUT_OUTe <= ID_EX_OUT_EX(10);
+	ID_EX_OUT_OUTe <= ID_EX_OUT_EX(12);
 	ID_EX_OUT_MR <= ID_EX_OUT_MEM(1);
 
 	EX_MEM_OUT_WE2R <= EX_MEM_OUT_WB(0);
@@ -820,11 +820,7 @@ BEGIN
 		port map(
 			clk		=>	clk,
 			reset		=>	reset,
-<<<<<<< Updated upstream
 			en		=>	ID_EX_OUT_OUTe,
-=======
-			en		=>	ID_EX_OUT_EX(12),
->>>>>>> Stashed changes
 			d		=>	EX_ALUResult,
 			q		=>	OUT_PORT
 		);
