@@ -55,7 +55,7 @@ force -freeze sim:/processor/Reset 1 0
 force -freeze sim:/processor/INTR_IN 0 0
 run
 force -freeze sim:/processor/Reset 0 0
-run 300 ps
+run 250 ps
 force -freeze sim:/processor/IN_PORT 32'h0CDAFE19 0
 run
 force -freeze sim:/processor/IN_PORT 32'h0000FFFF 0
