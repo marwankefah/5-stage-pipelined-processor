@@ -820,7 +820,11 @@ BEGIN
 		port map(
 			clk		=>	clk,
 			reset		=>	reset,
+<<<<<<< Updated upstream
 			en		=>	ID_EX_OUT_OUTe,
+=======
+			en		=>	ID_EX_OUT_EX(12),
+>>>>>>> Stashed changes
 			d		=>	EX_ALUResult,
 			q		=>	OUT_PORT
 		);
