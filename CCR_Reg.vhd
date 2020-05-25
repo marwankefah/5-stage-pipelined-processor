@@ -5,6 +5,7 @@ entity CCR_Reg is
 	port(
 		   clk : in std_logic;
 		   reset : in std_logic;
+		   RTIen: in std_logic;
 		   enF : in std_logic;
 		   stC:  in std_logic;
 		   clC:  in std_logic;
@@ -20,9 +21,11 @@ architecture ccr_reg_arch of CCR_Reg is
 
 signal register_sig: std_logic_vector(3 downto 0);
 begin
-	process(clk)
+	process(clk,RTIen)
 	begin
-		if (rising_edge(clk)) then
+	  if (falling_edge(RTIen)) then
+	    Q_CCR<=D_CCR;
+		elsif (falling_edge(clk)) then
 			if (reset = '1') then
 				Q_CCR <= (others=>'0');
 			elsif (enF = '1') then
