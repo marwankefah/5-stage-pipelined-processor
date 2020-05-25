@@ -451,6 +451,8 @@ Architecture Processor_Archi of Processor IS
 	signal HZD_NOPs:		std_logic;
 	signal HZD_enable_PC:		std_logic;
 	signal HZD_enable_IF_ID_buffer:	std_logic;
+	
+	signal IF_ID_flush: std_logic;
 
 	--END HAZARD DETECTION UNIT OUPUTS
 --=================================================================================================================================================
@@ -559,6 +561,9 @@ Architecture Processor_Archi of Processor IS
   --Global Reset for Buffers and Registers
   
 BEGIN
+  
+  --Flush Signal
+  IF_ID_flush <=  ID_OUT_IF_flush and HZD_enable_IF_ID_buffer;
 	--ALIASES AS SIGNALS
 	ID_EX_OUT_WE1R <= ID_EX_OUT_WB(1);
 	ID_EX_OUT_enF <= ID_EX_OUT_EX(1);
@@ -600,7 +605,7 @@ BEGIN
 		port map(
 		  
 			clk		=>	CLK,
-			reset		=>	ID_OUT_IF_flush, -- FLUSHING
+			reset		=>	IF_ID_flush, -- FLUSHING
 			en		=>	HZD_enable_IF_ID_buffer,  --To Do Hazard Detection Unit
 			
 			--INPUTS
@@ -706,7 +711,7 @@ BEGIN
 		port map(
 			enable 		=>	'1',
 			clk 		=>	CLK,
-			int		=>	INTR_IN,
+			int		=>	IF_ID_OUT_int,
 			rst 		=>	Reset,
 			opcode		=>	ID_OUT_opcode,
 	
@@ -978,5 +983,5 @@ BEGIN
 	WB_Stage_MUX : MUX_2x1 generic map(32) port map(MEM_WB_OUT_ALUr,MEM_WB_OUT_MEMR,MEM_WB_OUT_WBS,WB_OUT_WB);
 
 	--END WRITE BACK STAGE 
-
+  
 END Processor_Archi;

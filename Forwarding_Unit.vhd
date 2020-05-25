@@ -89,7 +89,8 @@ B<="00" when not(ID_EX_INPS="00") or en='0'  else "10" when EX_MEM_WE2R='1' and 
 
 
 -- FORWarding For Branching 
-C<="00" when not(ID_EX_INPS="00") or en='0'  else "10" when EX_MEM_WE2R='1' and IF_ID_RR1=EX_MEM_WR1
+C<="00" when en='0'  
+               else "10" when EX_MEM_WE2R='1' and IF_ID_RR1=EX_MEM_WR1
 					     else "01" when EX_MEM_WE2R='1' and IF_ID_RR1=EX_MEM_WR2
 					     else "01" when EX_MEM_WE1R='1' and IF_ID_RR1=EX_MEM_WR1  -- most familiar case EX-->EX
 					     else "00";

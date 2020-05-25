@@ -34,7 +34,6 @@ architecture harzard_detection_unit_arch of hazard_detection_unit is
 	signal counterStall : unsigned(2 downto 0) := "000";
 
 	--CONSTANTS
-	constant CALL_OP : std_logic_vector(5 downto 0) := "011100";
 	constant RET_OP : std_logic_vector(5 downto 0) := "011101";
 	constant RTI_OP : std_logic_vector(5 downto 0) := "011110";
 begin
@@ -47,13 +46,13 @@ begin
 					enable_PC <= '1';
 					enable_IF_ID_buffer <= '1';
 					counterFlush <= counterFlush - "001";
+				elsif (int = '1' or rst = '1' or opcode = RET_OP or opcode = RTI_OP) then -- RST CAL RET INT RTI
+					counterFlush <= "011";	
 				elsif (counterStall > "000") then
 					NOPs <= '1';
 					enable_PC <= '0';
 					enable_IF_ID_buffer <= '0';
 					counterStall <= counterStall - "001";
-				elsif (int = '1' or rst = '1' or opcode = CALL_OP or opcode = RET_OP or opcode = RTI_OP) then -- RST CAL RET INT RTI
-					counterFlush <= "100";	
 				elsif (ID_EX_MR = '1' and ID_EX_WE1R = '1' and PCBranchS = '1' and ID_RR1 = ID_EX_WR1) then -- LOAD USE CASE (JUMP OPERATIONS)
 					NOPs <= '1';
 					enable_PC <= '0';
